@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from 'react-icons/fi';
+import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin, FiMail, FiPhone, FiMessageCircle } from 'react-icons/fi';
 
 export default function Footer({ isHomePage = false }) {
   return (
@@ -12,9 +12,27 @@ export default function Footer({ isHomePage = false }) {
             <h3 className={`text-xl font-bold mb-4 ${isHomePage ? 'text-white' : 'text-primary'}`}>
               ∞ INFINITY
             </h3>
-            <p className="text-gray-400 text-sm">
-              Premium IT products and solutions for tech enthusiasts and professionals.
+            <p className="text-gray-400 text-sm mb-4">
+              Premium IT projects marketplace for students and customers. Buy ready-made projects or sell your own.
             </p>
+            <div className="space-y-2">
+              <a 
+                href="mailto:infinitywebtechnology1@gmail.com" 
+                className="flex items-center gap-2 text-gray-400 hover:text-primary transition-colors text-sm"
+              >
+                <FiMail size={16} />
+                <span>infinitywebtechnology1@gmail.com</span>
+              </a>
+              <a 
+                href="https://wa.me/919344736773" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors text-sm"
+              >
+                <FiMessageCircle size={16} />
+                <span>+91 93447 36773</span>
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { adminService } from '../api/adminService';
 import AdminLayout from '../components/admin/AdminLayout';
 import Loader from '../components/Loader';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { FiTrendingUp, FiUsers, FiPackage, FiDollarSign, FiArrowRight, FiShoppingBag, FiActivity } from 'react-icons/fi';
 
@@ -19,6 +20,8 @@ export default function AdminDashboard() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isDark } = useTheme();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -117,7 +120,7 @@ export default function AdminDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6"
+          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8"
         >
           <div>
             <h1 className={`text-4xl md:text-5xl font-extrabold mb-2 ${textClass}`}>
@@ -125,7 +128,18 @@ export default function AdminDashboard() {
                 Dashboard Overview
               </span>
             </h1>
-            <p className={textMuted}>Welcome back! Here's what's happening with your IT project marketplace.</p>
+            <p className={textMuted}>Welcome back, {user?.name || 'Admin'}! Here's what's happening with your IT project marketplace.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/admin/projects/new')}
+              className="px-6 py-3 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+            >
+              <FiPackage size={18} />
+              Add New Project
+            </motion.button>
           </div>
         </motion.div>
 

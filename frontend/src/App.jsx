@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AIChatbot from './components/AIChatbot';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -172,7 +171,6 @@ function AppContent() {
         <AppRoutes />
       </main>
       {!isAdminRoute && <Footer isHomePage={isHomePage} />}
-      {!isAdminRoute && <AIChatbot />}
       <Toaster position="top-right" />
     </div>
   );

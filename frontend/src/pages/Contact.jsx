@@ -84,7 +84,8 @@ export default function Contact() {
     }, 1000);
   };
 
-  const whatsappNumber = '919876543210'; // Replace with actual WhatsApp number
+  const whatsappNumber = '919344736773';
+  const email = 'infinitywebtechnology1@gmail.com';
   const whatsappMessage = encodeURIComponent(
     activeForm === 'custom-project' 
       ? 'Hello! I need a custom IT project for my college.'
@@ -167,19 +168,19 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-bold mb-1">Email</h4>
-                  <a href="mailto:support@infinity.com" className={`text-sm ${isDark ? 'text-gray-400 hover:text-primary' : 'text-gray-600 hover:text-primary'} transition`}>
-                    support@infinity.com
+                  <a href={`mailto:${email}`} className={`text-sm ${isDark ? 'text-gray-400 hover:text-primary' : 'text-gray-600 hover:text-primary'} transition`}>
+                    {email}
                   </a>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0">
                   <FiPhone className="text-white" size={20} />
                 </div>
                 <div>
-                  <h4 className="font-bold mb-1">Phone</h4>
-                  <a href="tel:+919876543210" className={`text-sm ${isDark ? 'text-gray-400 hover:text-primary' : 'text-gray-600 hover:text-primary'} transition`}>
-                    +91 98765 43210
+                  <h4 className="font-bold mb-1">WhatsApp</h4>
+                  <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className={`text-sm ${isDark ? 'text-gray-400 hover:text-green-400' : 'text-gray-600 hover:text-green-600'} transition`}>
+                    +91 93447 36773
                   </a>
                 </div>
               </div>

@@ -96,6 +96,58 @@ body {
   }
 }
 
+@keyframes rotateText {
+  0%, 20% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  25%, 45% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50%, 70% {
+    transform: translateY(-200%);
+    opacity: 0;
+  }
+  75%, 95% {
+    transform: translateY(-300%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  }
+  50% {
+    transform: translateY(-20px) rotateX(0deg) rotateY(0deg);
+  }
+  75% {
+    transform: translateY(-10px) rotateX(-5deg) rotateY(-5deg);
+  }
+}
+
+/* 3D Card Styles */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.card-3d:hover {
+  transform: rotateY(5deg) rotateX(5deg) translateZ(20px);
+}
+
+.perspective-3d {
+  perspective: 1000px;
+}
+
 /* Utility Classes */
 .container-fluid {
   @apply w-full max-w-full;

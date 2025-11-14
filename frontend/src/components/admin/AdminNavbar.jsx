@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiSearch, FiBell, FiUser, FiMenu, 
-  FiSettings, FiLogOut, FiX, FiSun, FiMoon 
+  FiSettings, FiLogOut, FiX, FiSun, FiMoon,
+  FiHome, FiGrid, FiTrendingUp, FiActivity
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -12,10 +13,19 @@ export default function AdminNavbar({ onMenuClick }) {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  
+  // Quick navigation items
+  const quickNavItems = [
+    { path: '/admin', label: 'Dashboard', icon: FiGrid },
+    { path: '/admin/projects', label: 'Projects', icon: FiGrid },
+    { path: '/admin/orders', label: 'Orders', icon: FiActivity },
+    { path: '/admin/analytics', label: 'Analytics', icon: FiTrendingUp },
+  ];
 
   const handleLogout = async () => {
     await logout();
@@ -66,10 +76,42 @@ export default function AdminNavbar({ onMenuClick }) {
               </button>
 
               {/* Logo */}
-              <Link to="/admin" className={`${textColor} text-2xl font-extrabold tracking-tight flex-shrink-0`}>
-                <span className={`text-transparent bg-clip-text ${logoGradient}`}>∞ INFINITY</span>
-                <span className="ml-2 text-xs font-normal opacity-70">Admin</span>
+              <Link to="/admin" className={`${textColor} text-2xl font-extrabold tracking-tight flex-shrink-0 flex items-center gap-2 group`}>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <FiGrid className="text-white" size={20} />
+                </div>
+                <div>
+                  <span className={`text-transparent bg-clip-text ${logoGradient}`}>∞ INFINITY</span>
+                  <span className="ml-2 text-xs font-normal opacity-70">Admin</span>
+                </div>
               </Link>
+
+              {/* Quick Navigation - Desktop */}
+              <div className="hidden lg:flex items-center gap-1 ml-6">
+                {quickNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path || 
+                    (item.path !== '/admin' && location.pathname.startsWith(item.path));
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                        isActive
+                          ? isDark
+                            ? 'bg-primary/20 text-primary border border-primary/30'
+                            : 'bg-primary/10 text-primary border border-primary/20'
+                          : isDark
+                          ? 'text-white/60 hover:text-white hover:bg-white/10'
+                          : 'text-gray-600 hover:text-primary hover:bg-primary/5'
+                      }`}
+                    >
+                      <Icon size={16} />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
 
               {/* Search Bar - Desktop */}
               <div className="hidden md:flex items-center flex-1 max-w-xl min-w-0 ml-4">
@@ -80,18 +122,31 @@ export default function AdminNavbar({ onMenuClick }) {
                     placeholder="Search orders, users, products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`w-full pl-12 pr-4 py-2 rounded-xl border transition-all ${
+                    className={`w-full pl-12 pr-4 py-2.5 rounded-xl border transition-all ${
                       isDark
                         ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50'
                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-primary focus:ring-2 focus:ring-primary/50'
-                    } focus:outline-none`}
+                    } focus:outline-none shadow-sm`}
                   />
                 </div>
               </div>
             </div>
 
             {/* Right Section */}
-            <div className="relative z-10 flex items-center gap-3">
+            <div className="relative z-10 flex items-center gap-2">
+              {/* Home Link */}
+              <Link
+                to="/"
+                className={`p-2 rounded-xl transition ${
+                  isDark 
+                    ? 'text-white/80 hover:text-white hover:bg-white/10' 
+                    : 'text-gray-700 hover:text-primary hover:bg-primary/10'
+                }`}
+                title="Go to Home"
+              >
+                <FiHome size={20} />
+              </Link>
+
               {/* Search Button - Mobile */}
               <button
                 onClick={() => setIsSearchOpen(!isSearchOpen)}

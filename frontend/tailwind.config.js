@@ -26,7 +26,9 @@ export default {
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'float': 'float 6s ease-in-out infinite',
         'float-reverse': 'floatReverse 6s ease-in-out infinite',
-        'gradient': 'gradient 15s ease infinite'
+        'gradient': 'gradient 15s ease infinite',
+        'rotate-text': 'rotateText 8s ease-in-out infinite',
+        'float-3d': 'float3d 6s ease-in-out infinite'
       },
       keyframes: {
         fadeIn: {
