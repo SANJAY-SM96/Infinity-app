@@ -43,8 +43,8 @@ const orderSchema = new mongoose.Schema(
       },
       currency: {
         type: String,
-        enum: ['USD', 'INR'],
-        default: 'USD'
+        enum: ['INR'],
+        default: 'INR'
       }
     },
     subtotal: Number,

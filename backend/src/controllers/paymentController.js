@@ -11,24 +11,17 @@ const razorpay = new Razorpay({
 // Stripe Payment Methods
 exports.createPaymentIntent = async (req, res, next) => {
   try {
-    const { total, orderId, currency = 'usd' } = req.body;
+    const { total, orderId } = req.body;
 
     if (!total || total <= 0) {
       return res.status(400).json({ message: 'Invalid amount' });
     }
 
-    // Stripe supports multiple currencies
-    const supportedCurrencies = ['usd', 'eur', 'gbp', 'inr', 'aud', 'cad', 'jpy', 'sgd'];
-    const paymentCurrency = currency.toLowerCase();
+    // Only INR currency supported
+    const paymentCurrency = 'inr';
     
-    if (!supportedCurrencies.includes(paymentCurrency)) {
-      return res.status(400).json({ message: 'Unsupported currency for Stripe' });
-    }
-
-    // Convert to smallest currency unit (cents for USD, paise for INR, etc.)
-    const amount = paymentCurrency === 'inr' 
-      ? Math.round(total * 100) // INR is already in smallest unit (paise)
-      : Math.round(total * 100); // USD and others use cents
+    // Convert to smallest currency unit (paise for INR)
+    const amount = Math.round(total * 100); // INR uses paise (100 paise = 1 rupee)
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
@@ -46,7 +39,7 @@ exports.createPaymentIntent = async (req, res, next) => {
       success: true,
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
-      currency: paymentCurrency
+      currency: paymentCurrency.toUpperCase()
     });
   } catch (error) {
     next(error);
@@ -55,7 +48,7 @@ exports.createPaymentIntent = async (req, res, next) => {
 
 exports.confirmPayment = async (req, res, next) => {
   try {
-    const { orderId, paymentIntentId, provider, currency } = req.body;
+    const { orderId, paymentIntentId, provider } = req.body;
 
     const order = await Order.findById(orderId);
     if (!order) {
@@ -70,7 +63,7 @@ exports.confirmPayment = async (req, res, next) => {
         order.paymentInfo.provider = 'stripe';
         order.paymentInfo.transactionId = paymentIntentId;
         order.paymentInfo.paymentStatus = 'completed';
-        order.paymentInfo.currency = paymentIntent.currency.toUpperCase();
+        order.paymentInfo.currency = 'INR';
         order.orderStatus = 'Confirmed';
         await order.save();
 

@@ -29,6 +29,7 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const [statsRes, chartRes, orderRes, topRes, categoryRes] = await Promise.all([
         adminService.getDashboardStats(),
         adminService.getSalesChart({ days: 30 }),
@@ -37,14 +38,37 @@ export default function AdminDashboard() {
         adminService.getCategoryStats()
       ]);
 
-      setStats(statsRes.data.stats);
-      setChartData(chartRes.data.chartData);
-      setOrderStats(orderRes.data.orderStats);
-      setTopProducts(topRes.data.topProducts);
-      setCategoryStats(categoryRes.data.categoryStats);
-      setRecentOrders(statsRes.data.stats.recentOrders || []);
+      if (statsRes?.data?.stats) {
+        setStats(statsRes.data.stats);
+        setRecentOrders(statsRes.data.stats.recentOrders || []);
+      }
+      if (chartRes?.data?.chartData) {
+        setChartData(chartRes.data.chartData);
+      }
+      if (orderRes?.data?.orderStats) {
+        setOrderStats(orderRes.data.orderStats);
+      }
+      if (topRes?.data?.topProducts) {
+        setTopProducts(topRes.data.topProducts);
+      }
+      if (categoryRes?.data?.categoryStats) {
+        setCategoryStats(categoryRes.data.categoryStats);
+      }
     } catch (error) {
       console.error('Failed to fetch admin data:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      // Set default values to prevent crashes
+      setStats({
+        totalOrders: 0,
+        totalUsers: 0,
+        totalProducts: 0,
+        totalRevenue: 0,
+        recentOrders: []
+      });
+      setChartData([]);
+      setOrderStats([]);
+      setTopProducts([]);
+      setCategoryStats([]);
     } finally {
       setLoading(false);
     }

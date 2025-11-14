@@ -17,7 +17,7 @@ exports.analyzeRequirements = async (req, res, next) => {
       description,
       domain,
       budget: parseFloat(budget),
-      currency: currency || 'USD'
+      currency: 'INR'
     };
 
     const analysis = await aiService.analyzeProjectRequirements(requirements);

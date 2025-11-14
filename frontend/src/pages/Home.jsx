@@ -126,10 +126,9 @@ export default function Home() {
     { value: '4.9/5', label: 'Customer Rating', icon: FiStar, color: 'text-pink-400' },
   ];
 
-  const bgClass = isDark 
-    ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
-    : 'bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30';
-  const textClass = isDark ? 'text-white' : 'text-gray-900';
+  // Force white/light theme
+  const bgClass = 'bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30';
+  const textClass = 'text-gray-900';
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -157,11 +156,7 @@ export default function Home() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-40 ${
-              isDark 
-                ? 'bg-gray-800/95 backdrop-blur-xl border-gray-700' 
-                : 'bg-white/95 backdrop-blur-xl border-gray-200'
-            } border rounded-2xl shadow-2xl px-6 py-3 hidden md:block`}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-40 bg-white/95 backdrop-blur-xl border-gray-200 border rounded-2xl shadow-2xl px-6 py-3 hidden md:block"
           >
             <div className="flex items-center gap-2">
               {navItems.map((item) => {
@@ -172,11 +167,7 @@ export default function Home() {
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => scrollToSection(item.id)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                      isDark
-                        ? 'text-white/70 hover:text-white hover:bg-white/10'
-                        : 'text-gray-600 hover:text-primary hover:bg-primary/10'
-                    }`}
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-gray-600 hover:text-primary hover:bg-primary/10"
                   >
                     <Icon size={16} />
                     <span>{item.label}</span>
@@ -187,11 +178,7 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowProjectForm(true)}
-                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ml-2 ${
-                  isDark
-                    ? 'bg-green-600/20 text-green-400 hover:bg-green-600/30 border border-green-600/30'
-                    : 'bg-green-50 text-green-600 hover:bg-green-100 border border-green-200'
-                }`}
+                className="px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ml-2 bg-green-50 text-green-600 hover:bg-green-100 border border-green-200"
               >
                 <FiFileText size={16} />
                 <span>Request Project</span>
@@ -290,7 +277,7 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.55 }}
           >
             <div className="flex items-center justify-center gap-3 text-2xl sm:text-3xl md:text-4xl font-bold flex-wrap">
-              <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Explore</span>
+              <span className="text-gray-700">Explore</span>
               <div className="relative h-12 sm:h-14 md:h-16 overflow-hidden inline-block" style={{ minWidth: '220px' }}>
                 <AnimatePresence mode="wait">
                   <motion.span
@@ -309,7 +296,7 @@ export default function Home() {
           </motion.div>
 
           <motion.p
-            className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
@@ -322,7 +309,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className={`mb-12 max-w-2xl mx-auto ${isDark ? 'bg-gray-800/50' : 'bg-white/50'} backdrop-blur-xl border ${isDark ? 'border-gray-700' : 'border-gray-200'} rounded-2xl p-6 shadow-xl`}
+            className="mb-12 max-w-2xl mx-auto bg-white/50 backdrop-blur-xl border border-gray-200 rounded-2xl p-6 shadow-xl"
           >
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
@@ -355,11 +342,7 @@ export default function Home() {
             <motion.div
               whileHover={{ scale: 1.05, y: -10 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative overflow-hidden rounded-3xl p-8 ${
-                isDark 
-                  ? 'bg-gradient-to-br from-blue-900/50 to-purple-900/50 border-2 border-blue-500/30' 
-                  : 'bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200'
-              } backdrop-blur-xl shadow-2xl cursor-pointer`}
+              className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 backdrop-blur-xl shadow-2xl cursor-pointer"
               onClick={() => navigate(isAuthenticated && user?.userType === 'student' ? '/dashboard/student' : '/register?userType=student')}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full -mr-16 -mt-16 blur-2xl" />
@@ -370,10 +353,10 @@ export default function Home() {
                 <h3 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                   I'm a Student
                 </h3>
-                <p className={`text-lg mb-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <p className="text-lg mb-6 text-gray-700">
                   Upload and sell your IT projects. Earn money from your React, Python, AI/ML, and web development projects.
                 </p>
-                <ul className={`space-y-2 mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <ul className="space-y-2 mb-6 text-gray-600">
                   <li className="flex items-center gap-2">
                     <FiCheck className="text-green-400" />
                     <span>Upload projects with images & videos</span>
@@ -401,11 +384,7 @@ export default function Home() {
             <motion.div
               whileHover={{ scale: 1.05, y: -10 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative overflow-hidden rounded-3xl p-8 ${
-                isDark 
-                  ? 'bg-gradient-to-br from-green-900/50 to-teal-900/50 border-2 border-green-500/30' 
-                  : 'bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200'
-              } backdrop-blur-xl shadow-2xl cursor-pointer`}
+              className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200 backdrop-blur-xl shadow-2xl cursor-pointer"
               onClick={() => navigate('/products')}
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/20 rounded-full -mr-16 -mt-16 blur-2xl" />
@@ -416,10 +395,10 @@ export default function Home() {
                 <h3 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
                   I'm a Customer
                 </h3>
-                <p className={`text-lg mb-6 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <p className="text-lg mb-6 text-gray-700">
                   Browse and buy ready-made IT projects. React, Python, AI/ML, Full-Stack web apps, and more.
                 </p>
-                <ul className={`space-y-2 mb-6 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                <ul className="space-y-2 mb-6 text-gray-600">
                   <li className="flex items-center gap-2">
                     <FiCheck className="text-green-400" />
                     <span>Browse 500+ IT projects</span>
@@ -473,8 +452,8 @@ export default function Home() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/register')}
-                className="px-8 py-4 bg-white dark:bg-gray-800 border-2 border-primary text-primary dark:text-white font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300"
+              onClick={() => navigate('/register')}
+              className="px-8 py-4 bg-white border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300"
               >
                 Get Started
               </motion.button>
@@ -504,7 +483,7 @@ export default function Home() {
       </section>
 
       {/* Featured Projects Showcase with 3D Effects */}
-      <section id="projects" className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
+      <section id="projects" className="py-20 bg-white relative overflow-hidden">
         {/* 3D Coding Elements Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(6)].map((_, i) => (
@@ -528,8 +507,8 @@ export default function Home() {
               }}
             >
               <div className="card-3d">
-                <div className={`w-16 h-16 ${isDark ? 'bg-blue-500/20' : 'bg-blue-100'} rounded-lg flex items-center justify-center border ${isDark ? 'border-blue-500/30' : 'border-blue-200'} shadow-lg`}>
-                  <FiCode className={`${isDark ? 'text-blue-400' : 'text-blue-600'}`} size={24} />
+                <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center border border-blue-200 shadow-lg">
+                  <FiCode className="text-blue-600" size={24} />
                 </div>
               </div>
             </motion.div>
@@ -543,12 +522,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-4xl md:text-5xl font-extrabold mb-4 ${textClass}`}>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">
               <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Featured Projects
               </span>
             </h2>
-            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className="text-xl text-gray-600">
               Explore our handpicked collection of top IT projects with live demos
             </p>
           </motion.div>
@@ -597,7 +576,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} text-lg`}>
+              <p className="text-gray-600 text-lg">
                 No featured projects available at the moment
               </p>
             </div>
@@ -623,10 +602,10 @@ export default function Home() {
       </section>
 
       {/* Repositories Section */}
-      <section id="repositories" className="py-20 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-900 relative overflow-hidden">
+      <section id="repositories" className="py-20 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'} 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(0,0,0,0.1) 1px, transparent 0)`,
             backgroundSize: '50px 50px'
           }} />
         </div>
@@ -638,12 +617,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-4xl md:text-5xl font-extrabold mb-4 ${textClass}`}>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">
               <span className="bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
                 GitHub Repositories
               </span>
             </h2>
-            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className="text-xl text-gray-600">
               Browse our curated collection of open-source repositories
             </p>
           </motion.div>
@@ -714,21 +693,21 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className={`${isDark ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-xl border ${isDark ? 'border-gray-700' : 'border-gray-200'} rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer group`}
+                  className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all cursor-pointer group"
                 >
                   <div className={`w-14 h-14 bg-gradient-to-br ${repo.color} rounded-xl flex items-center justify-center mb-4 shadow-lg`}>
                     <Icon className="text-white" size={28} />
                   </div>
-                  <h3 className={`text-xl font-bold mb-2 ${textClass}`}>{repo.name}</h3>
-                  <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-4 text-sm`}>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900">{repo.name}</h3>
+                  <p className="text-gray-600 mb-4 text-sm">
                     {repo.description}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 text-sm">
-                      <span className={`${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                      <span className="text-gray-600">
                         ⭐ {repo.stars}
                       </span>
-                      <span className={`px-2 py-1 rounded ${isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'}`}>
+                      <span className="px-2 py-1 rounded bg-gray-100 text-gray-700">
                         {repo.language}
                       </span>
                     </div>
@@ -764,7 +743,7 @@ export default function Home() {
       </section>
 
       {/* Shops Section */}
-      <section id="shops" className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
+      <section id="shops" className="py-20 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -772,12 +751,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-4xl md:text-5xl font-extrabold mb-4 ${textClass}`}>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">
               <span className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 bg-clip-text text-transparent">
                 Featured Shops
               </span>
             </h2>
-            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className="text-xl text-gray-600">
               Discover amazing shops with live previews and demo links
             </p>
           </motion.div>
@@ -840,7 +819,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className={`${isDark ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-xl border ${isDark ? 'border-gray-700' : 'border-gray-200'} rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all group`}
+                className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all group"
               >
                 <div className="relative h-48 overflow-hidden">
                   <img
@@ -876,17 +855,15 @@ export default function Home() {
                   )}
                 </div>
                 <div className="p-6">
-                  <h3 className={`text-xl font-bold mb-2 ${textClass}`}>{shop.name}</h3>
-                  <p className={`${isDark ? 'text-gray-400' : 'text-gray-600'} mb-4 text-sm`}>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900">{shop.name}</h3>
+                  <p className="text-gray-600 mb-4 text-sm">
                     {shop.description}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {shop.tech.map((tech, i) => (
                       <span
                         key={i}
-                        className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                          isDark ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-700'
-                        }`}
+                        className="px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700"
                       >
                         {tech}
                       </span>
@@ -917,10 +894,10 @@ export default function Home() {
       </section>
 
       {/* Tech Stack Section */}
-      <section id="tech" className="py-16 bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 border-y border-gray-200 dark:border-gray-700">
+      <section id="tech" className="py-16 bg-gradient-to-r from-gray-50 to-blue-50 border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p
-            className="text-center text-sm text-gray-500 dark:text-gray-400 mb-8 font-medium"
+            className="text-center text-sm text-gray-500 mb-8 font-medium"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -954,12 +931,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className={`text-4xl md:text-5xl font-extrabold mb-4 ${textClass}`}>
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-gray-900">
               <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Our Services
               </span>
             </h2>
-            <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+            <p className="text-xl text-gray-600">
               Everything you need for your IT project requirements
             </p>
           </motion.div>
@@ -994,13 +971,13 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className={`${isDark ? 'bg-gray-800/50' : 'bg-white/80'} backdrop-blur-xl border ${isDark ? 'border-gray-700' : 'border-gray-200'} rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all`}
+                  className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all"
                 >
                   <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}>
                     <Icon className="text-white" size={32} />
                   </div>
-                  <h3 className={`text-2xl font-bold mb-4 ${textClass}`}>{service.title}</h3>
-                  <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900">{service.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">
                     {service.description}
                   </p>
                 </motion.div>
@@ -1011,7 +988,7 @@ export default function Home() {
       </section>
 
       {/* Metrics Section */}
-      <section id="metrics" className="py-20 bg-white dark:bg-gray-900">
+      <section id="metrics" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {metrics.map((metric, index) => {

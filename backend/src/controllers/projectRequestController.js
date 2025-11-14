@@ -38,7 +38,7 @@ exports.createProjectRequest = async (req, res, next) => {
       description,
       domain,
       budget: parseFloat(budget),
-      currency: currency || 'USD',
+      currency: 'INR',
       techStack: techStack || [],
       features: features || [],
       timeline: timeline || '',
