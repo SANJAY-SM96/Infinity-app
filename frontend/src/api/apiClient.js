@@ -1,7 +1,23 @@
 import axios from 'axios';
 
+// Determine API URL based on environment
+const getApiUrl = () => {
+  // If VITE_API_URL is set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In production, use Render backend URL
+  if (import.meta.env.PROD) {
+    return 'https://infinity-apps.onrender.com/api';
+  }
+  
+  // Development: use local backend
+  return 'http://localhost:5000/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: getApiUrl(),
   withCredentials: true
 });
 

@@ -2,19 +2,21 @@
 node_modules/
 frontend/node_modules/
 backend/node_modules/
+functions/node_modules/
 
 # Build outputs
 frontend/dist/
+frontend/build/
 backend/dist/
 
 # Environment variables
 .env
 .env.local
 .env.production
-frontend/.env
-frontend/.env.local
-frontend/.env.production
+.env.development
 backend/.env
+frontend/.env
+functions/.env
 
 # Firebase
 .firebase/
@@ -31,15 +33,17 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
-
-# IDE
-.vscode/
-.idea/
 *.swp
 *.swo
 *~
 
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
 # Misc
 .cache/
-.parcel-cache/
-
+coverage/
+.nyc_output/
