@@ -185,7 +185,7 @@ export default function Register() {
   ), [isDark]);
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative pt-20`}>
       {/* Animated Background Gradient */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div

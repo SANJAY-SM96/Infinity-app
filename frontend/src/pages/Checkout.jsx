@@ -244,7 +244,7 @@ export default function Checkout() {
     : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500';
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} pt-24 pb-12`}>
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

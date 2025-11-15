@@ -51,11 +51,11 @@ export default function AdminNavbar({ onMenuClick }) {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className={`sticky top-0 z-50 transition-all duration-300 ${isDark ? 'bg-gray-900' : 'bg-white'}`}
+        className={`sticky top-0 z-50 transition-all duration-300 w-full ${isDark ? 'bg-gray-900' : 'bg-white'}`}
       >
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="w-full px-4 sm:px-6 py-4">
           <motion.div
-            className={`relative flex items-center justify-between rounded-2xl border px-6 py-3 transition-all duration-300 ${navBg} shadow-lg`}
+            className={`relative flex items-center justify-between rounded-2xl border px-4 sm:px-6 py-3 transition-all duration-300 ${navBg} shadow-lg w-full`}
             animate={{
               boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
             }}
@@ -77,11 +77,13 @@ export default function AdminNavbar({ onMenuClick }) {
 
               {/* Logo */}
               <Link to="/admin" className={`${textColor} text-2xl font-extrabold tracking-tight flex-shrink-0 flex items-center gap-2 group`}>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-primary via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <FiGrid className="text-white" size={20} />
-                </div>
+                <img 
+                  src="/player.svg" 
+                  alt="Infinity Logo" 
+                  className="w-10 h-10 group-hover:scale-110 transition-transform"
+                />
                 <div>
-                  <span className={`text-transparent bg-clip-text ${logoGradient}`}>∞ INFINITY</span>
+                  <span className={`text-transparent bg-clip-text ${logoGradient}`}>INFINITY</span>
                   <span className="ml-2 text-xs font-normal opacity-70">Admin</span>
                 </div>
               </Link>

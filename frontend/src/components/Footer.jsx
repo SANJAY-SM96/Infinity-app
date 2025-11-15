@@ -9,9 +9,16 @@ export default function Footer({ isHomePage = false }) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <h3 className={`text-xl font-bold mb-4 ${isHomePage ? 'text-white' : 'text-primary'}`}>
-              ∞ INFINITY
+            <div className="flex items-center gap-3 mb-4">
+              <img 
+                src="/player.svg" 
+                alt="Infinity Logo" 
+                className="w-10 h-10"
+              />
+              <h3 className={`text-xl font-bold ${isHomePage ? 'text-white' : 'text-primary'}`}>
+                INFINITY
             </h3>
+            </div>
             <p className="text-gray-400 text-sm mb-4">
               Premium IT projects marketplace for students and customers. Buy ready-made projects or sell your own.
             </p>

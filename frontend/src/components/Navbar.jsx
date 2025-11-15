@@ -13,6 +13,8 @@ export default function Navbar({ isHomePage = false }) {
   const { theme, toggleTheme, isDark } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -45,11 +47,27 @@ export default function Navbar({ isHomePage = false }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 20);
+      
+      // Hide navbar when scrolling down, show when scrolling up
+      if (currentScrollY < 100) {
+        // Always show at the top
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down - hide
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up - show
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
-    window.addEventListener('scroll', handleScroll);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Navbar styles based on page and theme
   const navBg = isHomePage 
@@ -69,26 +87,34 @@ export default function Navbar({ isHomePage = false }) {
   return (
     <motion.nav
       initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={`sticky top-0 z-50 transition-all duration-300 ${isHomePage ? 'bg-transparent' : (isDark ? 'bg-gray-900' : 'bg-white')}`}
+      animate={{ 
+        y: isVisible ? 0 : -100,
+        opacity: isVisible ? 1 : 0
+      }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${isHomePage ? 'bg-transparent' : (isDark ? 'bg-gray-900' : 'bg-white')}`}
     >
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <motion.div
-          className={`relative flex items-center justify-between rounded-2xl border px-6 py-3 transition-all duration-300 ${
+          className={`relative flex items-center justify-between rounded-2xl border px-5 sm:px-8 py-3.5 sm:py-4 transition-all duration-300 ${
             isHomePage 
               ? (scrolled 
-                  ? (isDark ? 'bg-gray-800/95 backdrop-blur-lg border-gray-700 shadow-lg' : 'bg-white/95 backdrop-blur-lg border-gray-200 shadow-lg')
-                  : (isDark ? 'bg-gray-800/80 backdrop-blur-md border-gray-700' : 'bg-white/80 backdrop-blur-md border-gray-100'))
-              : (isDark ? 'bg-gray-800/95 backdrop-blur-lg border-gray-700' : 'bg-white/95 backdrop-blur-lg border-gray-200')
+                  ? (isDark ? 'bg-gray-800 border-gray-700 shadow-lg' : 'bg-white border-gray-200 shadow-lg')
+                  : (isDark ? 'bg-gray-800/80 border-gray-700' : 'bg-white/80 border-gray-100'))
+              : (isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200')
           }`}
           animate={{
             boxShadow: isHomePage && scrolled ? '0 10px 40px rgba(0,0,0,0.1)' : '0 10px 40px rgba(0,0,0,0.05)'
           }}
         >
           {/* Logo */}
-          <Link to={getHomePath()} className={`relative z-10 text-2xl font-extrabold tracking-tight ${textColor}`}>
-            <span className={`text-transparent bg-clip-text ${logoGradient}`}>∞ INFINITY</span>
+          <Link to={getHomePath()} className={`relative z-10 flex items-center gap-3 ${textColor}`}>
+            <img 
+              src="/player.svg" 
+              alt="Infinity Logo" 
+              className="w-12 h-12 sm:w-14 sm:h-14"
+            />
+            <span className={`text-3xl sm:text-4xl font-extrabold tracking-tight text-transparent bg-clip-text ${logoGradient}`}>INFINITY</span>
           </Link>
 
           {/* Desktop Menu */}
@@ -101,7 +127,7 @@ export default function Navbar({ isHomePage = false }) {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`px-4 py-2 rounded-xl font-medium transition-colors ${
+                className={`px-5 py-2.5 rounded-xl font-semibold text-base transition-colors ${
                   isDark 
                     ? 'text-white/80 hover:text-white hover:bg-white/10' 
                     : 'text-gray-700 hover:text-primary hover:bg-primary/10'
@@ -113,7 +139,7 @@ export default function Navbar({ isHomePage = false }) {
             {isAuthenticated && user?.role === 'admin' && (
               <Link 
                 to="/admin" 
-                className={`px-4 py-2 rounded-xl font-medium transition-colors ${
+                className={`px-5 py-2.5 rounded-xl font-semibold text-base transition-colors ${
                   isDark 
                     ? 'text-white/80 hover:text-white hover:bg-white/10' 
                     : 'text-gray-700 hover:text-primary hover:bg-primary/10'
@@ -129,24 +155,24 @@ export default function Navbar({ isHomePage = false }) {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className={`p-2 rounded-xl transition ${
+              className={`p-2.5 rounded-xl transition ${
                 isDark 
                   ? 'text-white/80 hover:text-white hover:bg-white/10' 
                   : 'text-gray-700 hover:text-primary hover:bg-primary/10'
               }`}
               aria-label="Toggle theme"
             >
-              {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
+              {isDark ? <FiSun size={24} /> : <FiMoon size={24} />}
             </button>
             
             {/* Cart */}
             <Link 
               to="/cart" 
-              className={`group relative p-2 transition ${
+              className={`group relative p-2.5 transition ${
                 isDark ? 'text-white/80 hover:text-white' : 'text-gray-700 hover:text-primary'
               }`}
             >
-              <FiShoppingCart size={22} />
+              <FiShoppingCart size={24} />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 text-[10px] font-extrabold rounded-full w-5 h-5 flex items-center justify-center bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white">
                   {cartCount}
@@ -159,30 +185,30 @@ export default function Navbar({ isHomePage = false }) {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => navigate('/dashboard')} 
-                  className={`px-4 py-2 rounded-xl font-medium transition ${
+                  className={`px-5 py-2.5 rounded-xl font-semibold transition ${
                     isDark 
                       ? 'text-white/80 hover:text-white hover:bg-white/10' 
                       : 'text-gray-700 hover:text-primary hover:bg-primary/10'
                   }`}
                 >
-                  <FiUser size={20} />
+                  <FiUser size={22} />
                 </button>
                 <button 
                   onClick={handleLogout} 
-                  className={`px-4 py-2 rounded-xl font-medium transition ${
+                  className={`px-5 py-2.5 rounded-xl font-semibold transition ${
                     isDark 
                       ? 'text-white/80 hover:text-red-400 hover:bg-red-500/10' 
                       : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
-                  <FiLogOut size={20} />
+                  <FiLogOut size={22} />
                 </button>
               </div>
             ) : (
               <div className="flex gap-2">
                 <button
                   onClick={() => navigate('/login')}
-                  className={`px-4 py-2 rounded-xl border font-semibold text-sm transition ${
+                  className={`px-6 py-3 rounded-xl border font-bold text-base transition ${
                     isDark
                       ? 'border-gray-600 text-white/90 hover:bg-gray-700/50'
                       : 'border-gray-300 text-gray-700 hover:bg-gray-50'
@@ -192,7 +218,7 @@ export default function Navbar({ isHomePage = false }) {
                 </button>
                 <button
                   onClick={() => navigate('/register')}
-                  className="px-4 py-2 rounded-xl font-extrabold text-sm transition bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-xl"
+                  className="px-6 py-3 rounded-xl font-extrabold text-base transition bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-xl"
                 >
                   Sign Up
                 </button>

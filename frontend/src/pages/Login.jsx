@@ -149,7 +149,7 @@ export default function Login() {
   ), [isDark]);
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative transition-colors duration-300`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative transition-colors duration-300 pt-20`}>
       {/* Animated Background Gradient */}
       <div className="absolute inset-0 overflow-hidden">
       <motion.div

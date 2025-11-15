@@ -82,7 +82,7 @@ export default function CustomerHome() {
   ];
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass}`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} pt-24`}>
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 px-4">
         <div className="max-w-7xl mx-auto">

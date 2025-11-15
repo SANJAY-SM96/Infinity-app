@@ -171,7 +171,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6 w-full">
+      <div className="w-full space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

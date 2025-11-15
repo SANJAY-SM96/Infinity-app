@@ -68,7 +68,7 @@ export default function ProductDetails() {
     : 'bg-white/80 backdrop-blur-xl border-gray-200';
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} pt-24 pb-12`}>
       <div className="max-w-7xl mx-auto px-4">
         <motion.button
           onClick={() => navigate('/products')}

@@ -61,6 +61,19 @@ export default function Home() {
     { text: 'Other things...', color: 'from-indigo-500 via-purple-500 to-pink-500' },
   ];
 
+  // Floating pastel gradient icons for left/right sides
+  const floatingIconsLeft = [
+    { icon: FiShield, x: '10%', y: '20%', delay: 0, gradient: 'from-blue-200 to-cyan-200' },
+    { icon: FiLayers, x: '8%', y: '50%', delay: 0.5, gradient: 'from-pink-200 to-purple-200' },
+    { icon: FiCode, x: '12%', y: '75%', delay: 1, gradient: 'from-indigo-200 to-blue-200' },
+  ];
+
+  const floatingIconsRight = [
+    { icon: FiGlobe, x: '88%', y: '25%', delay: 0.3, gradient: 'from-green-200 to-teal-200' },
+    { icon: FiCpu, x: '90%', y: '55%', delay: 0.8, gradient: 'from-orange-200 to-pink-200' },
+    { icon: FiZap, x: '87%', y: '80%', delay: 1.2, gradient: 'from-yellow-200 to-orange-200' },
+  ];
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentRotatingText((prev) => (prev + 1) % 4);
@@ -103,21 +116,12 @@ export default function Home() {
       const currentScrollY = window.scrollY;
       setShowStickyNav(currentScrollY > 300);
       
-      // Hide floating buttons when scrolling down, show when scrolling up
-      if (currentScrollY < 100) {
-        // Always show at top of page
-        setShowFloatingButtons(true);
-      } else if (currentScrollY > lastScrollY) {
-        // Scrolling down - hide
-        setShowFloatingButtons(false);
-      } else {
-        // Scrolling up - show
-        setShowFloatingButtons(true);
-      }
+      // Always show floating buttons - never hide them
+      setShowFloatingButtons(true);
       
       setLastScrollY(currentScrollY);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
@@ -220,8 +224,8 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Hero Section - Super Home Page with Two Paths */}
-      <section id="home" className={`relative min-h-screen flex items-center justify-center overflow-hidden ${bgClass}`}>
+      {/* Hero Section - Clean Grid Structure */}
+      <section id="home" className={`relative min-h-screen flex items-center justify-center overflow-hidden ${bgClass} transition-all duration-300`}>
         {/* Animated Background Gradient with Enhanced Parallax */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -298,27 +302,58 @@ export default function Home() {
           )}
         </div>
 
-        {/* Floating Icons */}
-        {floatingIcons.map((item, index) => {
+        {/* Floating Pastel Gradient Icons - Left Side (Low Opacity, Symmetrical) */}
+        {floatingIconsLeft.map((item, index) => {
           const Icon = item.icon;
           return (
             <motion.div
-              key={index}
-              className="absolute"
+              key={`left-${index}`}
+              className="absolute pointer-events-none z-0"
               style={{ left: item.x, top: item.y }}
               initial={{ opacity: 0, y: 20 }}
               animate={{ 
-                opacity: [0.3, 0.6, 0.3],
+                opacity: [0.15, 0.25, 0.15],
                 y: [0, -20, 0],
+                scale: [1, 1.05, 1],
               }}
               transition={{
-                duration: 4,
+                duration: 6,
                 delay: item.delay,
                 repeat: Infinity,
                 ease: 'easeInOut'
               }}
             >
-              <Icon className="w-8 h-8 text-primary/30" />
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md opacity-30`}>
+                <Icon className="w-7 h-7 text-white/60" />
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {/* Floating Pastel Gradient Icons - Right Side (Low Opacity, Symmetrical) */}
+        {floatingIconsRight.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <motion.div
+              key={`right-${index}`}
+              className="absolute pointer-events-none z-0"
+              style={{ left: item.x, top: item.y }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ 
+                opacity: [0.15, 0.25, 0.15],
+                y: [0, -20, 0],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                duration: 6,
+                delay: item.delay,
+                repeat: Infinity,
+                ease: 'easeInOut'
+              }}
+            >
+              <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-md opacity-30`}>
+                <Icon className="w-7 h-7 text-white/60" />
+              </div>
             </motion.div>
           );
         })}
@@ -417,296 +452,177 @@ export default function Home() {
           />
         </div>
 
-        {/* Hero Content */}
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-tight"
-              initial={{ opacity: 0, y: 20 }}
+        {/* Hero Content - Centered Container with Perfect Alignment */}
+        <main className="relative z-10 w-full pt-24 sm:pt-28 md:pt-32">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-center"
             >
-              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                IT Project Marketplace
-              </span>
-              <br />
-              <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
-                For Students & Customers
-              </span>
-            </motion.h1>
-          </motion.div>
-
-          {/* Rotating "Other things..." Text */}
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55 }}
-          >
-            <div className="flex items-center justify-center gap-3 text-2xl sm:text-3xl md:text-4xl font-bold flex-wrap">
-              <span className="text-gray-700">Explore</span>
-              <div className="relative h-12 sm:h-14 md:h-16 overflow-hidden inline-block" style={{ minWidth: '220px' }}>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={currentRotatingText}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                    className={`bg-gradient-to-r ${rotatingTexts[currentRotatingText].color} bg-clip-text text-transparent h-12 sm:h-14 md:h-16 flex items-center whitespace-nowrap absolute inset-0`}
-                  >
-                    {rotatingTexts[currentRotatingText].text}
-                  </motion.span>
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.p
-            className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-          >
-            Buy ready-made IT projects or sell your own. React, Python, AI/ML, Full-Stack, and more.
-          </motion.p>
-
-          {/* Contact Info Banner */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-              className={`mb-12 max-w-3xl mx-auto backdrop-blur-xl border rounded-2xl p-4 sm:p-6 shadow-xl ${
-                isDark 
-                  ? 'bg-gray-800/50 border-gray-700' 
-                  : 'bg-white/50 border-gray-200'
-              }`}
-          >
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4">
-              <a
-                href={`mailto:${email}`}
-                className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all group text-sm sm:text-base flex-1 sm:flex-none min-h-[48px]"
+              {/* Headline - Multi-line Gradient Text, Perfectly Centered */}
+              <motion.h1
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold leading-tight mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
               >
-                <FiMail size={20} className="flex-shrink-0" />
-                <span className="font-semibold truncate">{email}</span>
-              </a>
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3.5 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all group text-sm sm:text-base flex-1 sm:flex-none min-h-[48px]"
-              >
-                <FiMessageSquare size={20} className="flex-shrink-0" />
-                <span className="font-semibold">+91 93447 36773</span>
-              </a>
-              <a
-                href="https://www.instagram.com/infiniitywebtechnology/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3.5 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white rounded-xl hover:shadow-lg transition-all group text-sm sm:text-base flex-1 sm:flex-none min-h-[48px]"
-              >
-                <FiInstagram size={20} className="flex-shrink-0" />
-                <span className="font-semibold truncate">@infiniitywebtechnology</span>
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Two Path Selection Cards */}
-          <motion.div
-            className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-          >
-            {/* Student Path Card */}
-            <motion.div
-              whileHover={{ scale: 1.05, y: -10 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 backdrop-blur-xl shadow-2xl cursor-pointer"
-              onClick={() => navigate(isAuthenticated && user?.userType === 'student' ? '/dashboard/student' : '/register?userType=student')}
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full -mr-16 -mt-16 blur-2xl" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                  <FiUpload className="text-white" size={32} />
-                </div>
-                <h3 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  I'm a Student
-                </h3>
-                <p className="text-lg mb-6 text-gray-700">
-                  Upload and sell your IT projects. Earn money from your React, Python, AI/ML, and web development projects.
-                </p>
-                <ul className="space-y-2 mb-6 text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Upload projects with images & videos</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Set your own prices</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Track sales & earnings</span>
-                  </li>
-                </ul>
-                <motion.button
-                  whileHover={{ x: 5 }}
-                  className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 group"
-                >
-                  Start Selling
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </motion.button>
-              </div>
-            </motion.div>
-
-            {/* Customer Path Card */}
-            <motion.div
-              whileHover={{ scale: 1.05, y: -10 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200 backdrop-blur-xl shadow-2xl cursor-pointer"
-              onClick={() => navigate('/products')}
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/20 rounded-full -mr-16 -mt-16 blur-2xl" />
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                  <FiShoppingBag className="text-white" size={32} />
-                </div>
-                <h3 className="text-3xl font-extrabold mb-4 bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
-                  I'm a Customer
-                </h3>
-                <p className="text-lg mb-6 text-gray-700">
-                  Browse and buy ready-made IT projects. React, Python, AI/ML, Full-Stack web apps, and more.
-                </p>
-                <ul className="space-y-2 mb-6 text-gray-600">
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Browse 500+ IT projects</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Instant download after purchase</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <FiCheck className="text-green-400" />
-                    <span>Complete source code included</span>
-                  </li>
-                </ul>
-                <motion.button
-                  whileHover={{ x: 5 }}
-                  className="w-full py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 group"
-                >
-                  Browse Projects
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Enhanced CTA Section with Urgency */}
-          <motion.div
-            className="flex flex-col items-center gap-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-          >
-            {/* Main CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/products')}
-                className="relative px-10 py-5 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 flex items-center gap-3 group overflow-hidden"
-                style={{ animation: 'glowPulse 2s ease-in-out infinite' }}
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></span>
-                <span className="relative z-10 flex items-center gap-3">
-                  <FiShoppingBag size={24} />
-                  Browse 500+ Projects Now
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent block">
+                  IT Project Marketplace
                 </span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowProjectForm(true)}
-                className="px-10 py-5 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-green-500/50 transition-all duration-300 flex items-center gap-3 group"
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent block">
+                  For Students &{' '}
+                </span>
+                <span className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 bg-clip-text text-transparent block">
+                  Customers
+                </span>
+              </motion.h1>
+
+              {/* Subheading - Explore Projects... Centered with Balanced Letter Spacing */}
+              <motion.div
+                className="mt-6 mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.55 }}
               >
-                <FiFileText size={24} />
-                Request Custom Project
-                <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
-              </motion.button>
-            </div>
+                <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide ${isDark ? 'text-gray-300' : 'text-gray-700'} transition-all duration-300`}>
+                  Explore Projects
+                  <motion.span
+                    animate={{ opacity: [1, 0.3, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    ...
+                  </motion.span>
+                </h2>
+              </motion.div>
 
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <FiCheck className="text-green-500" size={18} />
-                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Instant Download</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiCheck className="text-green-500" size={18} />
-                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>100% Source Code</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiCheck className="text-green-500" size={18} />
-                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Lifetime Support</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FiCheck className="text-green-500" size={18} />
-                <span className={isDark ? 'text-gray-300' : 'text-gray-700'}>Money Back Guarantee</span>
-              </div>
-            </div>
-
-            {!isAuthenticated && (
+              {/* Paragraph - Max Width and Centered */}
               <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.2 }}
-                className="text-center"
+                className={`text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto leading-relaxed mt-6 mb-12 ${isDark ? 'text-gray-400' : 'text-gray-600'} transition-all duration-300`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                Buy ready-made IT projects or sell your own. React, Python, AI/ML, Full-Stack, and more.
+              </motion.p>
+
+              {/* Contact Buttons Row - Perfectly Centered with Equal Sizing */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                className="flex justify-center items-center gap-4 flex-wrap mt-8 mb-12"
+              >
+                <a
+                  href={`mailto:${email}`}
+                  className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full hover:shadow-xl transition-all duration-300 text-base font-semibold h-14 w-full sm:w-auto sm:min-w-[180px]"
+                >
+                  <FiMail size={22} />
+                  <span>Email</span>
+                </a>
+                <a
+                  href={whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full hover:shadow-xl transition-all duration-300 text-base font-semibold h-14 w-full sm:w-auto sm:min-w-[180px]"
+                >
+                  <FiMessageSquare size={22} />
+                  <span>WhatsApp</span>
+                </a>
+                <a
+                  href="https://www.instagram.com/infiniitywebtechnology/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 text-white rounded-full hover:shadow-xl transition-all duration-300 text-base font-semibold h-14 w-full sm:w-auto sm:min-w-[180px]"
+                >
+                  <FiInstagram size={22} />
+                  <span>Instagram</span>
+                </a>
+              </motion.div>
+
+              {/* Main CTA Buttons - Equal-Sized and Center-Aligned */}
+              <motion.div
+                className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8 mb-10"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
               >
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/register')}
-                  className="px-8 py-4 bg-white/90 backdrop-blur-sm border-2 border-primary text-primary font-semibold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 shadow-lg"
+                  onClick={() => navigate('/products')}
+                  className="px-8 py-5 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold text-lg rounded-xl shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 flex items-center justify-center gap-3 group h-16 w-full sm:w-auto sm:min-w-[300px]"
                 >
-                  Create Free Account →
+                  <FiShoppingBag size={24} />
+                  <span>Browse 500+ Projects</span>
+                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                 </motion.button>
-                <p className={`mt-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Join 10,000+ students and customers
-                </p>
-              </motion.p>
-            )}
-          </motion.div>
-        </motion.div>
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowProjectForm(true)}
+                  className="px-8 py-5 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white font-bold text-lg rounded-xl shadow-2xl hover:shadow-green-500/50 transition-all duration-300 flex items-center justify-center gap-3 group h-16 w-full sm:w-auto sm:min-w-[300px]"
+                >
+                  <FiFileText size={24} />
+                  <span>Request Custom Project</span>
+                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                </motion.button>
+              </motion.div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, repeat: Infinity, repeatType: 'reverse', duration: 2 }}
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-primary rounded-full flex items-start justify-center p-2 bg-white/50 backdrop-blur-sm"
-          >
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-1 h-3 bg-primary rounded-full"
-            />
-          </motion.div>
-        </motion.div>
+              {/* Feature Icons Row - Single Row, Centered with Equal Spacing */}
+              <motion.div
+                className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10 mt-8 mb-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.1 }}
+              >
+                <div className="flex items-center gap-2">
+                  <FiDownload className={`${isDark ? 'text-green-400' : 'text-green-500'}`} size={18} />
+                  <span className={`text-sm sm:text-base font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} transition-all duration-300`}>Instant Download</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiCode className={`${isDark ? 'text-blue-400' : 'text-blue-500'}`} size={18} />
+                  <span className={`text-sm sm:text-base font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} transition-all duration-300`}>100% Source Code</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiMessageCircle className={`${isDark ? 'text-purple-400' : 'text-purple-500'}`} size={18} />
+                  <span className={`text-sm sm:text-base font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} transition-all duration-300`}>Lifetime Support</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FiShield className={`${isDark ? 'text-orange-400' : 'text-orange-500'}`} size={18} />
+                  <span className={`text-sm sm:text-base font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} transition-all duration-300`}>Money Back Guarantee</span>
+                </div>
+              </motion.div>
+
+              {/* Create Free Account Button */}
+              {!isAuthenticated && (
+                <motion.div
+                  className="mt-6 mb-12"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.2 }}
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/register')}
+                    className={`px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg ${
+                      isDark 
+                        ? 'bg-white/10 backdrop-blur-sm border-2 border-white/20 text-white hover:bg-white/20' 
+                        : 'bg-white/90 backdrop-blur-sm border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                    }`}
+                  >
+                    Create Free Account →
+                  </motion.button>
+                  <p className={`mt-2 text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} transition-all duration-300`}>
+                    Join 10,000+ students and customers
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
+          </div>
+        </main>
       </section>
 
       {/* Featured Projects Showcase with 3D Effects */}
@@ -754,12 +670,12 @@ export default function Home() {
             <motion.div
               className="inline-block mb-4"
               whileHover={{ scale: 1.05 }}
-            >
+          >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4">
-                <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Featured Projects
-                </span>
-              </h2>
+              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Featured Projects
+              </span>
+            </h2>
             </motion.div>
             <p className="text-xl md:text-2xl text-gray-600 mb-6">
               Explore our handpicked collection of top IT projects with live demos
@@ -1576,64 +1492,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Floating Contact Buttons */}
-      <AnimatePresence>
-        {showFloatingButtons && (
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-4"
-          >
-            {/* Instagram Button */}
-            <motion.a
-              href="https://www.instagram.com/infiniitywebtechnology/"
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1.4, type: 'spring', stiffness: 200 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-pink-500/50 transition-all duration-300 group"
-              title="Follow us on Instagram"
-            >
-              <FiInstagram size={24} className="group-hover:scale-110 transition-transform" />
-            </motion.a>
-            
-            {/* Email Button */}
-            <motion.a
-              href={`mailto:${email}`}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1.5, type: 'spring', stiffness: 200 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-blue-500/50 transition-all duration-300 group"
-              title={`Email us at ${email}`}
-            >
-              <FiMail size={24} className="group-hover:scale-110 transition-transform" />
-            </motion.a>
-            
-            {/* WhatsApp Button */}
-            <motion.a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1.6, type: 'spring', stiffness: 200 }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-green-500/50 transition-all duration-300 group"
-              title="Chat with us on WhatsApp"
-            >
-              <FiMessageSquare size={24} className="group-hover:scale-110 transition-transform" />
-            </motion.a>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Right Side Bottom Floating Buttons - Always Visible, Vertical with Equal Spacing */}
+      <motion.div
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="fixed right-5 bottom-5 z-50 flex flex-col items-center gap-4"
+      >
+        {/* Instagram Button */}
+        <motion.a
+          href="https://www.instagram.com/infiniitywebtechnology/"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.4, type: 'spring', stiffness: 200 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-16 h-16 bg-gradient-to-r from-pink-500 via-purple-500 to-orange-500 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-pink-500/50 transition-all duration-300 group"
+          title="Follow us on Instagram"
+        >
+          <FiInstagram size={24} className="group-hover:scale-110 transition-transform" />
+        </motion.a>
+        
+        {/* Email Button */}
+        <motion.a
+          href={`mailto:${email}`}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.5, type: 'spring', stiffness: 200 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-blue-500/50 transition-all duration-300 group"
+          title={`Email us at ${email}`}
+        >
+          <FiMail size={24} className="group-hover:scale-110 transition-transform" />
+        </motion.a>
+        
+        {/* WhatsApp Button */}
+        <motion.a
+          href={whatsappLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.6, type: 'spring', stiffness: 200 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:shadow-green-500/50 transition-all duration-300 group"
+          title="Chat with us on WhatsApp"
+        >
+          <FiMessageSquare size={24} className="group-hover:scale-110 transition-transform" />
+        </motion.a>
+      </motion.div>
 
       {/* Project Request Form Modal */}
       <ProjectRequestForm isOpen={showProjectForm} onClose={() => setShowProjectForm(false)} />

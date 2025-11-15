@@ -95,7 +95,7 @@ export default function Contact() {
   );
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative py-12`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative pt-24 pb-12`}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div

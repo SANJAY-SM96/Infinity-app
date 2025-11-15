@@ -64,7 +64,7 @@ export default function ProductList() {
     : 'bg-white border-gray-300 text-gray-900';
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} pt-24 pb-12`}>
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div

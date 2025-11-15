@@ -69,7 +69,7 @@ export default function About() {
   ];
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative pt-20`}>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div

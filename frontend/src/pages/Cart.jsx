@@ -30,7 +30,7 @@ export default function Cart() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div className={`min-h-screen ${bgClass} ${textClass} flex items-center justify-center px-4`}>
+      <div className={`min-h-screen ${bgClass} ${textClass} flex items-center justify-center px-4 pt-20`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +81,7 @@ export default function Cart() {
   const total = subtotal + tax;
 
   return (
-    <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
+    <div className={`min-h-screen ${bgClass} ${textClass} pt-24 pb-12`}>
       <div className="max-w-7xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
