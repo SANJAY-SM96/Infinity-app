@@ -22,6 +22,8 @@ import Register from './pages/Register.jsx';
 import UserDashboard from './pages/UserDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
+import StudentHome from './pages/StudentHome';
+import CustomerHome from './pages/CustomerHome';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProjects from './pages/admin/AdminProjects';
 import AdminProjectForm from './pages/admin/AdminProjectForm';
@@ -79,6 +81,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <CustomerDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home/student"
+        element={
+          <ProtectedRoute>
+            <StudentHome />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home/customer"
+        element={
+          <ProtectedRoute>
+            <CustomerHome />
           </ProtectedRoute>
         }
       />

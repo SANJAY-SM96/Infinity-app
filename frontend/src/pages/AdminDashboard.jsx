@@ -7,7 +7,9 @@ import Loader from '../components/Loader';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { FiTrendingUp, FiUsers, FiPackage, FiDollarSign, FiArrowRight, FiShoppingBag, FiActivity } from 'react-icons/fi';
+import { FiTrendingUp, FiUsers, FiPackage, FiDollarSign, FiArrowRight, FiShoppingBag, FiActivity, FiFileText, FiPlus, FiSettings, FiClock } from 'react-icons/fi';
+import ProjectRequestForm from '../components/ProjectRequestForm';
+import { projectRequestService } from '../api/projectRequestService';
 
 const COLORS = ['#2563EB', '#ff006e', '#9333ea', '#10b981', '#f59e0b'];
 
@@ -18,7 +20,10 @@ export default function AdminDashboard() {
   const [topProducts, setTopProducts] = useState([]);
   const [categoryStats, setCategoryStats] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [recentRequests, setRecentRequests] = useState([]);
+  const [requestStats, setRequestStats] = useState({ total: 0, pending: 0 });
   const [loading, setLoading] = useState(true);
+  const [showRequestForm, setShowRequestForm] = useState(false);
   const { isDark } = useTheme();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -54,6 +59,25 @@ export default function AdminDashboard() {
       if (categoryRes?.data?.categoryStats) {
         setCategoryStats(categoryRes.data.categoryStats);
       }
+
+      // Fetch project requests
+      try {
+        const requestsRes = await projectRequestService.getAll({ limit: 5, page: 1 });
+        const requests = requestsRes.data.requests || requestsRes.data.projectRequests || [];
+        setRecentRequests(requests);
+        
+        // Fetch all for stats
+        const allRequestsRes = await projectRequestService.getAll({ limit: 1000 });
+        const allRequests = allRequestsRes.data.requests || allRequestsRes.data.projectRequests || [];
+        setRequestStats({
+          total: allRequests.length,
+          pending: allRequests.filter(r => r.status === 'pending').length
+        });
+      } catch (reqError) {
+        console.error('Failed to fetch project requests:', reqError);
+        setRecentRequests([]);
+        setRequestStats({ total: 0, pending: 0 });
+      }
     } catch (error) {
       console.error('Failed to fetch admin data:', error);
       console.error('Error details:', error.response?.data || error.message);
@@ -69,9 +93,17 @@ export default function AdminDashboard() {
       setOrderStats([]);
       setTopProducts([]);
       setCategoryStats([]);
+      setRecentRequests([]);
+      setRequestStats({ total: 0, pending: 0 });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRequestFormClose = () => {
+    setShowRequestForm(false);
+    // Refresh data after form submission
+    fetchData();
   };
 
   if (loading) {
@@ -147,28 +179,39 @@ export default function AdminDashboard() {
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className={`text-4xl md:text-5xl font-extrabold mb-2 ${textClass}`}>
+            <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-2 ${textClass}`}>
               <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Dashboard Overview
               </span>
             </h1>
-            <p className={textMuted}>Welcome back, {user?.name || 'Admin'}! Here's what's happening with your IT project marketplace.</p>
+            <p className={`${textMuted} text-sm sm:text-base`}>Welcome back, {user?.name || 'Admin'}! Here's what's happening with your IT project marketplace.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowRequestForm(true)}
+              className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-secondary via-purple-600 to-pink-600 text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+            >
+              <FiFileText size={16} />
+              <span className="hidden sm:inline">Create Request</span>
+              <span className="sm:hidden">Request</span>
+            </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/admin/projects/new')}
-              className="px-6 py-3 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
             >
-              <FiPackage size={18} />
-              Add New Project
+              <FiPackage size={16} />
+              <span className="hidden sm:inline">Add New Project</span>
+              <span className="sm:hidden">Project</span>
             </motion.button>
           </div>
         </motion.div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {statsCards.map((card, index) => {
             const Icon = card.icon;
             return (
@@ -181,7 +224,7 @@ export default function AdminDashboard() {
                 className="relative group cursor-pointer h-full"
               >
                 <Link to={card.link} className="block h-full">
-                  <div className={`relative h-full min-h-[180px] bg-gradient-to-br ${card.bgGradient} ${cardBg} border ${card.borderColor} rounded-2xl p-6 transition-all duration-300 overflow-hidden shadow-xl hover:shadow-2xl flex flex-col`}>
+                  <div className={`relative h-full min-h-[160px] sm:min-h-[180px] bg-gradient-to-br ${card.bgGradient} ${cardBg} border ${card.borderColor} rounded-xl sm:rounded-2xl p-4 sm:p-6 transition-all duration-300 overflow-hidden shadow-xl hover:shadow-2xl flex flex-col`}>
                     <div className="relative z-10 flex flex-col flex-1">
                       <div className="flex items-start justify-between mb-4">
                         <div className={`p-3 rounded-xl border-2 ${card.borderColor} bg-gradient-to-br ${card.bgGradient}`}>
@@ -194,7 +237,7 @@ export default function AdminDashboard() {
                       <div className="flex-1 flex flex-col justify-between">
                         <div>
                           <p className={`${textMuted} text-xs font-medium mb-2 uppercase tracking-wider`}>{card.title}</p>
-                          <p className={`text-3xl font-extrabold ${textClass} mb-1`}>{card.value}</p>
+                          <p className={`text-2xl sm:text-3xl font-extrabold ${textClass} mb-1`}>{card.value}</p>
                         </div>
                         <div className="flex items-center gap-2 mt-4 pt-2">
                           <div className={`h-1.5 w-12 rounded-full ${card.iconColor.replace('text-', 'bg-')}`} />
@@ -210,20 +253,20 @@ export default function AdminDashboard() {
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Sales Chart */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`${cardBg} border rounded-2xl p-6 shadow-xl`}
+            className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
               <div>
-                <h2 className={`${textClass} text-xl font-bold mb-1`}>Sales Overview</h2>
-                <p className={textMuted}>Last 30 days</p>
+                <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-1`}>Sales Overview</h2>
+                <p className={`${textMuted} text-sm`}>Last 30 days</p>
               </div>
-              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                <FiTrendingUp className="text-blue-500" size={20} />
+              <div className="p-2 sm:p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 w-fit">
+                <FiTrendingUp className="text-blue-500" size={18} />
               </div>
             </div>
             {chartData.length > 0 ? (
@@ -268,15 +311,15 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className={`${cardBg} border rounded-2xl p-6 shadow-xl`}
+            className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
               <div>
-                <h2 className={`${textClass} text-xl font-bold mb-1`}>Orders by Status</h2>
-                <p className={textMuted}>Current distribution</p>
+                <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-1`}>Orders by Status</h2>
+                <p className={`${textMuted} text-sm`}>Current distribution</p>
               </div>
-              <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20">
-                <FiActivity className="text-pink-500" size={20} />
+              <div className="p-2 sm:p-3 rounded-xl bg-pink-500/10 border border-pink-500/20 w-fit">
+                <FiActivity className="text-pink-500" size={18} />
               </div>
             </div>
             {orderStats.length > 0 ? (
@@ -311,9 +354,9 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className={`${cardBg} border rounded-2xl p-6 shadow-xl`}
+            className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
           >
-            <h2 className={`${textClass} text-xl font-bold mb-6`}>Products by Category</h2>
+            <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-4 sm:mb-6`}>Products by Category</h2>
             {categoryStats.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <PieChart>
@@ -353,15 +396,15 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className={`${cardBg} border rounded-2xl p-6 shadow-xl`}
+            className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
           >
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
               <div>
-                <h2 className={`${textClass} text-xl font-bold mb-1`}>Top Selling Products</h2>
-                <p className={textMuted}>Best performers</p>
+                <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-1`}>Top Selling Products</h2>
+                <p className={`${textMuted} text-sm`}>Best performers</p>
               </div>
-              <Link to="/admin/projects" className="text-primary hover:text-blue-600 text-sm font-medium flex items-center gap-1 group">
-                View all <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <Link to="/admin/projects" className="text-primary hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 group w-fit">
+                View all <FiArrowRight size={12} className="sm:w-[14px] sm:h-[14px] group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
             {topProducts.length > 0 ? (
@@ -406,15 +449,15 @@ export default function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className={`${cardBg} border rounded-2xl p-6 shadow-xl`}
+          className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
         >
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
             <div>
-              <h2 className={`${textClass} text-xl font-bold mb-1`}>Recent Orders</h2>
-              <p className={textMuted}>Latest transactions</p>
+              <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-1`}>Recent Orders</h2>
+              <p className={`${textMuted} text-sm`}>Latest transactions</p>
             </div>
-            <Link to="/admin/orders" className="text-primary hover:text-blue-600 text-sm font-medium flex items-center gap-1 group">
-              View all <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            <Link to="/admin/orders" className="text-primary hover:text-blue-600 text-xs sm:text-sm font-medium flex items-center gap-1 group w-fit">
+              View all <FiArrowRight size={12} className="sm:w-[14px] sm:h-[14px] group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           {recentOrders.length > 0 ? (
@@ -438,22 +481,22 @@ export default function AdminDashboard() {
                       transition={{ delay: index * 0.05 }}
                       className={`border-b ${isDark ? 'hover:bg-gray-800/50' : 'hover:bg-gray-50'} transition-all`}
                     >
-                      <td className="py-4 px-4">
-                        <span className={`${textClass} font-mono text-sm font-semibold`}>
+                      <td className="py-3 sm:py-4 px-2 sm:px-4">
+                        <span className={`${textClass} font-mono text-xs sm:text-sm font-semibold`}>
                           #{order._id.slice(-8)}
                         </span>
                       </td>
-                      <td className="py-4 px-4">
+                      <td className="py-3 sm:py-4 px-2 sm:px-4">
                         <div>
-                          <p className={`${textClass} font-medium text-sm`}>{order.user?.name || 'N/A'}</p>
-                          <p className={textMuted}>{order.user?.email || ''}</p>
+                          <p className={`${textClass} font-medium text-xs sm:text-sm`}>{order.user?.name || 'N/A'}</p>
+                          <p className={`${textMuted} text-xs hidden sm:block`}>{order.user?.email || ''}</p>
                         </div>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className="text-primary font-bold text-lg">₹{order.total?.toFixed(2) || '0.00'}</span>
+                      <td className="py-3 sm:py-4 px-2 sm:px-4">
+                        <span className="text-primary font-bold text-base sm:text-lg">₹{order.total?.toFixed(2) || '0.00'}</span>
                       </td>
-                      <td className="py-4 px-4">
-                        <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                      <td className="py-3 sm:py-4 px-2 sm:px-4">
+                        <span className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold ${
                           order.orderStatus === 'Delivered' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
                           order.orderStatus === 'Shipped' ? 'bg-blue-500/20 text-blue-500 border border-blue-500/30' :
                           order.orderStatus === 'Processing' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
@@ -462,7 +505,7 @@ export default function AdminDashboard() {
                           {order.orderStatus}
                         </span>
                       </td>
-                      <td className={`py-4 px-4 ${textMuted} text-sm`}>
+                      <td className={`py-3 sm:py-4 px-2 sm:px-4 ${textMuted} text-xs sm:text-sm`}>
                         {new Date(order.createdAt).toLocaleDateString()}
                       </td>
                     </motion.tr>
@@ -480,7 +523,103 @@ export default function AdminDashboard() {
             </div>
           )}
         </motion.div>
+
+        {/* Project Requests Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+            className={`${cardBg} border rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+              <div>
+                <h2 className={`${textClass} text-lg sm:text-xl font-bold mb-1 flex items-center gap-2`}>
+                  <FiFileText className="text-primary" size={18} />
+                  Project Requests
+                </h2>
+                <p className={`${textMuted} text-sm`}>Manage incoming project requests</p>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                {requestStats.pending > 0 && (
+                  <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl ${isDark ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-yellow-50 border-yellow-200'} border`}>
+                    <div className="flex items-center gap-2">
+                      <FiClock className="text-yellow-500" size={14} />
+                      <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-yellow-400' : 'text-yellow-700'}`}>
+                        {requestStats.pending} Pending
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <Link 
+                  to="/admin/project-requests" 
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-primary to-secondary text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                >
+                  <FiSettings size={16} />
+                  <span className="hidden sm:inline">Manage Requests</span>
+                  <span className="sm:hidden">Manage</span>
+                </Link>
+              </div>
+            </div>
+
+          {recentRequests.length > 0 ? (
+            <div className="space-y-3">
+              {recentRequests.map((request, index) => (
+                <motion.div
+                  key={request._id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  onClick={() => navigate('/admin/project-requests')}
+                  className={`flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all ${
+                    isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                  } group`}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className={`${textClass} font-semibold text-sm mb-1 truncate`}>{request.projectTitle}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
+                        request.status === 'completed' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
+                        'bg-blue-500/20 text-blue-500 border border-blue-500/30'
+                      }`}>
+                        {request.status}
+                      </span>
+                      <span className={`${textMuted} text-xs`}>{request.domain}</span>
+                      <span className={`${textMuted} text-xs`}>•</span>
+                      <span className={`${textClass} font-bold text-sm`}>
+                        {request.currency === 'INR' ? '₹' : '$'}{request.budget?.toFixed(2) || '0.00'}
+                      </span>
+                    </div>
+                    <p className={`${textMuted} text-xs mt-2`}>
+                      {request.name} • {new Date(request.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="ml-3">
+                    <FiArrowRight 
+                      className={`${isDark ? 'text-gray-500' : 'text-gray-400'} group-hover:text-primary group-hover:translate-x-1 transition-all`} 
+                      size={18} 
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center">
+              <div className={`w-12 h-12 mx-auto mb-3 rounded-full ${isDark ? 'bg-primary/10' : 'bg-blue-50'} flex items-center justify-center`}>
+                <FiFileText className="text-primary" size={24} />
+              </div>
+              <p className={`${textClass} font-medium text-sm mb-1`}>No project requests</p>
+              <p className={`${textMuted} text-xs`}>Requests will appear here when submitted</p>
+            </div>
+          )}
+        </motion.div>
       </div>
+
+      {/* Project Request Form Modal */}
+      <ProjectRequestForm 
+        isOpen={showRequestForm} 
+        onClose={handleRequestFormClose} 
+      />
     </AdminLayout>
   );
 }

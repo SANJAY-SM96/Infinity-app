@@ -11,24 +11,27 @@ module.exports = function(passport) {
         proxy: true
       },
       async (accessToken, refreshToken, profile, done) => {
-        const newUser = {
-          googleId: profile.id,
-          name: profile.displayName,
-          email: profile.emails[0].value,
-          avatar: profile.photos[0].value
-        };
-
         try {
           let user = await User.findOne({ googleId: profile.id });
 
           if (user) {
             done(null, user);
           } else {
+            // Default to customer - userType will be updated in callback if needed
+            const newUser = {
+              googleId: profile.id,
+              name: profile.displayName,
+              email: profile.emails[0].value,
+              avatar: profile.photos[0].value,
+              userType: 'customer' // Default, will be updated in callback if registration
+            };
+
             user = await User.create(newUser);
             done(null, user);
           }
         } catch (err) {
-          console.error(err);
+          console.error('Google OAuth error:', err);
+          done(err, null);
         }
       }
     )

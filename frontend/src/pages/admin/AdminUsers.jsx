@@ -62,13 +62,17 @@ export default function AdminUsers() {
 
         {/* Search */}
         <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={20} />
+          <FiSearch className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} size={20} />
           <input
             type="text"
             placeholder="Search users..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-dark-light border border-primary/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+            className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/20 transition ${
+              isDark 
+                ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-primary/50' 
+                : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-primary/50'
+            }`}
           />
         </div>
 
@@ -84,29 +88,29 @@ export default function AdminUsers() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20 hover:border-primary/40 transition"
+              className={`${isDark ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' : 'bg-white/80 backdrop-blur-xl border-gray-200'} border rounded-xl p-6 hover:border-primary/40 transition`}
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-pink-500 flex items-center justify-center">
                   <FiUser className="text-white" size={20} />
                 </div>
                 <div>
-                  <p className="text-white font-semibold">{user.name}</p>
-                  <p className="text-white/60 text-sm">{user.email}</p>
+                  <p className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>{user.name}</p>
+                  <p className={isDark ? 'text-gray-400' : 'text-gray-600'} style={{ fontSize: '0.875rem' }}>{user.email}</p>
                 </div>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-white/60 text-sm">Role</span>
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'} style={{ fontSize: '0.875rem' }}>Role</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    user.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-cyan-500/20 text-cyan-400'
+                    user.role === 'admin' ? 'bg-purple-500/20 text-purple-500' : 'bg-cyan-500/20 text-cyan-500'
                   }`}>
                     {user.role || 'user'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/60 text-sm">Joined</span>
-                  <span className="text-white/40 text-sm">
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'} style={{ fontSize: '0.875rem' }}>Joined</span>
+                  <span className={isDark ? 'text-gray-400' : 'text-gray-600'} style={{ fontSize: '0.875rem' }}>
                     {new Date(user.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -117,7 +121,7 @@ export default function AdminUsers() {
 
         {users.length === 0 && !loading && (
           <div className="py-12 text-center">
-            <p className="text-white/40">No users found</p>
+            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>No users found</p>
           </div>
         )}
       </div>

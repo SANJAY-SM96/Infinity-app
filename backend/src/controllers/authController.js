@@ -244,26 +244,60 @@ exports.resetPassword = async (req, res, next) => {
 // @route   GET /api/auth/google
 // @access  Public
 exports.googleAuth = (req, res, next) => {
-  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+  // Store userType and registration flag in state parameter
+  const userType = req.query.userType || 'customer';
+  const isRegistration = req.query.registration === 'true' || req.headers.referer?.includes('/register');
+  const state = JSON.stringify({ userType, isRegistration });
+  
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    state: Buffer.from(state).toString('base64') // Encode state as base64
+  })(req, res, next);
 };
 
 // @desc    Google OAuth callback
 // @route   GET /api/auth/google/callback
 // @access  Public
 exports.googleAuthCallback = (req, res, next) => {
-  passport.authenticate('google', { failureRedirect: '/login' }, (err, user) => {
+  let stateData = { userType: 'customer', isRegistration: false };
+  
+  // Decode state if provided
+  if (req.query.state) {
+    try {
+      stateData = JSON.parse(Buffer.from(req.query.state, 'base64').toString());
+    } catch (err) {
+      console.error('Error decoding state:', err);
+    }
+  }
+  
+  const redirectPath = stateData.isRegistration ? '/register' : '/login';
+  
+  passport.authenticate('google', { failureRedirect: redirectPath }, async (err, user) => {
     if (err) {
       return next(err);
     }
     if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?error=google_auth_failed`);
+      return res.redirect(`${process.env.CLIENT_URL || 'https://infinity-apps.onrender.com'}${redirectPath}?error=google_auth_failed`);
+    }
+
+    // If this is a new user registration, update userType
+    if (stateData.isRegistration && stateData.userType) {
+      try {
+        // Check if user was just created (no userType set or default customer)
+        if (!user.userType || user.userType === 'customer') {
+          user.userType = stateData.userType;
+          await user.save();
+        }
+      } catch (err) {
+        console.error('Error updating userType:', err);
+      }
     }
 
     // Generate JWT token
     const token = generateToken(user);
 
     // Redirect to frontend with token
-    res.redirect(`${process.env.CLIENT_URL || 'http://localhost:3000'}/login?token=${token}`);
+    res.redirect(`${process.env.CLIENT_URL || 'https://infinity-apps.onrender.com'}${redirectPath}?token=${token}`);
   })(req, res, next);
 };
 

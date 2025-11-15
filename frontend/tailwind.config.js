@@ -6,14 +6,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2563EB',
-        'primary-dark': '#1e40af',
-        'primary-light': '#3b82f6',
-        secondary: '#0b0f14',
-        accent: '#ff006e',
-        dark: '#0a0e12',
-        'dark-lighter': '#131820',
-        'dark-light': '#1a1f28'
+        primary: '#5C6AC4',
+        'primary-dark': '#4C5AB4',
+        'primary-light': '#7E8AFF',
+        secondary: '#A17AFF',
+        accent: '#A17AFF',
+        dark: '#181A1F',
+        'dark-lighter': '#242730',
+        'dark-light': '#242730',
+        // 2025 UI Theme Colors
+        'light-bg': '#F9FAFB',
+        'light-card': '#FFFFFF',
+        'dark-bg': '#181A1F',
+        'dark-card': '#242730',
+        'accent-primary': '#5C6AC4',
+        'accent-secondary': '#A17AFF',
+        'accent-dark': '#7E8AFF'
       },
       fontFamily: {
         sans: ['Inter', 'Poppins', 'system-ui', 'sans-serif'],

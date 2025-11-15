@@ -44,9 +44,10 @@ export default function StudentDashboard() {
     try {
       setLoading(true);
       const response = await projectRequestService.getMyRequests();
-      setMyRequests(response.data.requests || []);
+      setMyRequests(response.data.projectRequests || response.data.requests || []);
     } catch (error) {
       console.error('Failed to fetch requests:', error);
+      toast.error('Failed to load your project requests');
     } finally {
       setLoading(false);
     }
@@ -149,6 +150,7 @@ export default function StudentDashboard() {
     ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
     : 'bg-gradient-to-br from-white via-blue-50 to-indigo-50';
   const textClass = isDark ? 'text-white' : 'text-gray-900';
+  const textMuted = isDark ? 'text-gray-400' : 'text-gray-600';
   const cardBg = isDark 
     ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' 
     : 'bg-white/80 backdrop-blur-xl border-gray-200';
@@ -174,27 +176,52 @@ export default function StudentDashboard() {
   return (
     <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-2">
-              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Student Dashboard
-              </span>
-            </h1>
-            <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-              Request custom-made IT projects for your college
-            </p>
+        {/* Welcome Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`${cardBg} border rounded-2xl p-8 mb-8 bg-gradient-to-r ${isDark ? 'from-gray-800/50 to-gray-700/50' : 'from-blue-50/50 to-indigo-50/50'}`}
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-3">
+                <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  Welcome, {user?.name || 'Student'}! 👋
+                </span>
+              </h1>
+              <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                Request custom-made IT projects for your college assignments and final year projects
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${textMuted} mb-1`}>Total Requests</p>
+                  <p className={`text-2xl font-bold ${textClass}`}>{myRequests.length}</p>
+                </div>
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${textMuted} mb-1`}>In Progress</p>
+                  <p className={`text-2xl font-bold text-blue-500`}>
+                    {myRequests.filter(r => r.status === 'in-progress').length}
+                  </p>
+                </div>
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${textMuted} mb-1`}>Completed</p>
+                  <p className={`text-2xl font-bold text-green-500`}>
+                    {myRequests.filter(r => r.status === 'completed').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowRequestForm(true)}
+              className="px-8 py-4 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-3 whitespace-nowrap"
+            >
+              <FiFileText size={24} />
+              Request Custom Project
+            </motion.button>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowRequestForm(true)}
-            className="px-6 py-3 bg-gradient-to-r from-primary to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
-          >
-            <FiFileText />
-            Request Custom Project
-          </motion.button>
-        </div>
+        </motion.div>
 
         {/* Request Form Modal */}
         {showRequestForm && (

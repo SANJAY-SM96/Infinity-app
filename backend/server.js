@@ -45,7 +45,7 @@ const corsOptions = {
     // In production, use CLIENT_URL from environment
     const allowedOrigins = process.env.CLIENT_URL 
       ? process.env.CLIENT_URL.split(',').map(url => url.trim())
-      : ['http://localhost:3000'];
+      : ['https://infinity-apps.onrender.com', 'http://localhost:3000'];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -92,6 +92,26 @@ if (nodeEnv === 'production') {
 // Health Check
 app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date() });
+});
+
+// Root API endpoint
+app.get('/api', (req, res) => {
+  res.json({ 
+    success: true,
+    message: 'Infinity App API is running',
+    version: '1.0.0',
+    timestamp: new Date(),
+    endpoints: {
+      auth: '/api/auth',
+      products: '/api/products',
+      cart: '/api/cart',
+      orders: '/api/orders',
+      payments: '/api/payments',
+      admin: '/api/admin',
+      ai: '/api/ai',
+      projectRequests: '/api/project-requests'
+    }
+  });
 });
 
 // Routes

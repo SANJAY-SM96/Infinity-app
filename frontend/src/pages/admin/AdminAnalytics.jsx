@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/Loader';
 import { adminService } from '../../api/adminService';
+import { useTheme } from '../../context/ThemeContext';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { FiTrendingUp, FiDollarSign, FiUsers, FiPackage } from 'react-icons/fi';
 
@@ -16,6 +17,7 @@ export default function AdminAnalytics() {
   const [categoryStats, setCategoryStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('30');
+  const { isDark } = useTheme();
 
   useEffect(() => {
     fetchAnalytics();
@@ -52,24 +54,36 @@ export default function AdminAnalytics() {
     );
   }
 
+  const textClass = isDark ? 'text-white' : 'text-gray-900';
+  const textMuted = isDark ? 'text-gray-400' : 'text-gray-600';
+  const cardBg = isDark 
+    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' 
+    : 'bg-white/80 backdrop-blur-xl border-gray-200';
+  const chartGridColor = isDark ? '#333' : '#e5e7eb';
+  const chartTextColor = isDark ? '#999' : '#666';
+
   return (
     <AdminLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Analytics</h1>
-            <p className="text-white/60">Detailed analytics and insights for your store</p>
+            <h1 className={`text-3xl font-bold mb-2 ${textClass}`}>Analytics</h1>
+            <p className={textMuted}>Detailed analytics and insights for your store</p>
           </div>
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2 bg-dark-light border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer"
+            className={`px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer ${
+              isDark 
+                ? 'bg-gray-700/50 border-gray-600 text-white' 
+                : 'bg-white border-gray-300 text-gray-900'
+            }`}
           >
-            <option value="7" className="bg-dark-light">Last 7 days</option>
-            <option value="30" className="bg-dark-light">Last 30 days</option>
-            <option value="90" className="bg-dark-light">Last 90 days</option>
-            <option value="365" className="bg-dark-light">Last year</option>
+            <option value="7" className={isDark ? 'bg-gray-800' : 'bg-white'}>Last 7 days</option>
+            <option value="30" className={isDark ? 'bg-gray-800' : 'bg-white'}>Last 30 days</option>
+            <option value="90" className={isDark ? 'bg-gray-800' : 'bg-white'}>Last 90 days</option>
+            <option value="365" className={isDark ? 'bg-gray-800' : 'bg-white'}>Last year</option>
           </select>
         </div>
 
@@ -77,9 +91,9 @@ export default function AdminAnalytics() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20"
+          className={`${cardBg} border rounded-xl p-6`}
         >
-          <h2 className="text-xl font-bold text-white mb-4">Revenue Overview</h2>
+          <h2 className={`text-xl font-bold mb-4 ${textClass}`}>Revenue Overview</h2>
           {salesChart.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
               <AreaChart data={salesChart}>
@@ -89,15 +103,15 @@ export default function AdminAnalytics() {
                     <stop offset="95%" stopColor="#00d4ff" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                <XAxis dataKey="_id" stroke="#666" fontSize={12} />
-                <YAxis stroke="#666" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} />
+                <XAxis dataKey="_id" stroke={chartTextColor} fontSize={12} />
+                <YAxis stroke={chartTextColor} fontSize={12} />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1a1f28', 
-                    border: '1px solid #00d4ff',
+                    backgroundColor: isDark ? '#1a1f28' : '#ffffff',
+                    border: `1px solid ${isDark ? '#00d4ff' : '#2563EB'}`,
                     borderRadius: '8px',
-                    color: '#fff'
+                    color: isDark ? '#fff' : '#000'
                   }} 
                 />
                 <Area 
@@ -112,7 +126,7 @@ export default function AdminAnalytics() {
             </ResponsiveContainer>
           ) : (
             <div className="h-[400px] flex items-center justify-center">
-              <p className="text-white/40">No data available</p>
+              <p className={textMuted}>No data available</p>
             </div>
           )}
         </motion.div>
@@ -124,21 +138,21 @@ export default function AdminAnalytics() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20"
+            className={`${cardBg} border rounded-xl p-6`}
           >
-            <h2 className="text-xl font-bold text-white mb-4">Orders by Status</h2>
+            <h2 className={`text-xl font-bold mb-4 ${textClass}`}>Orders by Status</h2>
             {orderStats.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={orderStats}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                  <XAxis dataKey="_id" stroke="#666" fontSize={12} />
-                  <YAxis stroke="#666" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} />
+                  <XAxis dataKey="_id" stroke={chartTextColor} fontSize={12} />
+                  <YAxis stroke={chartTextColor} fontSize={12} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1a1f28', 
-                      border: '1px solid #ff006e',
+                      backgroundColor: isDark ? '#1a1f28' : '#ffffff',
+                      border: `1px solid ${isDark ? '#ff006e' : '#ff006e'}`,
                       borderRadius: '8px',
-                      color: '#fff'
+                      color: isDark ? '#fff' : '#000'
                     }} 
                   />
                   <Bar dataKey="count" fill="#ff006e" name="Count" radius={[8, 8, 0, 0]} />
@@ -146,7 +160,7 @@ export default function AdminAnalytics() {
               </ResponsiveContainer>
             ) : (
               <div className="h-[300px] flex items-center justify-center">
-                <p className="text-white/40">No data available</p>
+                <p className={textMuted}>No data available</p>
               </div>
             )}
           </motion.div>
@@ -156,9 +170,9 @@ export default function AdminAnalytics() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20"
+            className={`${cardBg} border rounded-xl p-6`}
           >
-            <h2 className="text-xl font-bold text-white mb-4">Products by Category</h2>
+            <h2 className={`text-xl font-bold mb-4 ${textClass}`}>Products by Category</h2>
             {categoryStats.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -178,17 +192,17 @@ export default function AdminAnalytics() {
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1a1f28', 
-                      border: '1px solid #00d4ff',
+                      backgroundColor: isDark ? '#1a1f28' : '#ffffff',
+                      border: `1px solid ${isDark ? '#00d4ff' : '#2563EB'}`,
                       borderRadius: '8px',
-                      color: '#fff'
+                      color: isDark ? '#fff' : '#000'
                     }} 
                   />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
               <div className="h-[300px] flex items-center justify-center">
-                <p className="text-white/40">No data available</p>
+                <p className={textMuted}>No data available</p>
               </div>
             )}
           </motion.div>
@@ -199,39 +213,41 @@ export default function AdminAnalytics() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20"
+          className={`${cardBg} border rounded-xl p-6`}
         >
-          <h2 className="text-xl font-bold text-white mb-4">Top Selling Products</h2>
+          <h2 className={`text-xl font-bold mb-4 ${textClass}`}>Top Selling Products</h2>
           {topProducts.length > 0 ? (
             <div className="space-y-3">
               {topProducts.map((product, index) => (
                 <div
                   key={product._id}
-                  className="flex items-center justify-between p-4 rounded-lg bg-dark/50 hover:bg-dark transition"
+                  className={`flex items-center justify-between p-4 rounded-lg transition ${
+                    isDark ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-gray-50 hover:bg-gray-100'
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-cyan-500 to-pink-500 flex items-center justify-center text-white font-bold">
                       {index + 1}
                     </div>
                     <div>
-                      <p className="text-white font-medium">
+                      <p className={`${textClass} font-medium`}>
                         {product.productDetails?.[0]?.title || 'Unknown Product'}
                       </p>
-                      <p className="text-white/40 text-sm">
+                      <p className={textMuted} style={{ fontSize: '0.875rem' }}>
                         {product.quantity} sold • ₹{product.revenue?.toFixed(2) || '0.00'}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-cyan-400 font-semibold">₹{product.revenue?.toFixed(2) || '0.00'}</p>
-                    <p className="text-white/40 text-sm">{product.quantity} units</p>
+                    <p className={`${isDark ? 'text-cyan-400' : 'text-blue-600'} font-semibold`}>₹{product.revenue?.toFixed(2) || '0.00'}</p>
+                    <p className={textMuted} style={{ fontSize: '0.875rem' }}>{product.quantity} units</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="h-[300px] flex items-center justify-center">
-              <p className="text-white/40">No data available</p>
+              <p className={textMuted}>No data available</p>
             </div>
           )}
         </motion.div>

@@ -28,7 +28,7 @@ export default function AdminLayout({ children }) {
         <AdminNavbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
         {/* Page Content */}
-        <main className="flex-1 p-4 lg:p-8 overflow-y-auto relative overflow-x-hidden min-w-0">
+        <main className="flex-1 p-3 sm:p-4 lg:p-6 xl:p-8 overflow-y-auto relative overflow-x-hidden min-w-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

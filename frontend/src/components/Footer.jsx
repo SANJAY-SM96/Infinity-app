@@ -114,8 +114,11 @@ export default function Footer({ isHomePage = false }) {
                 <FiTwitter size={20} />
               </a>
               <a 
-                href="#" 
-                className={`text-gray-400 transition-colors ${isHomePage ? 'hover:text-blue-400' : 'hover:text-primary'}`}
+                href="https://www.instagram.com/infiniitywebtechnology/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`text-gray-400 transition-colors ${isHomePage ? 'hover:text-pink-400' : 'hover:text-primary'}`}
+                title="Follow us on Instagram"
               >
                 <FiInstagram size={20} />
               </a>

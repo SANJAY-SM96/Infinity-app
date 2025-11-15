@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import authService from '../api/authService';
 import toast from 'react-hot-toast';
 import { FaEye, FaEyeSlash, FaGoogle, FaGithub, FaFacebook, FaTwitter } from 'react-icons/fa';
 import { FiMail, FiLock, FiArrowRight, FiZap, FiShield, FiTrendingUp } from 'react-icons/fi';
@@ -19,7 +20,54 @@ export default function Login() {
   const heroY = useTransform(scrollY, [0, 500], [0, 150]);
 
   useEffect(() => {
-  if (isAuthenticated) navigate('/');
+    if (isAuthenticated) {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.userType === 'student') {
+        navigate('/home/student');
+      } else if (user.userType === 'customer') {
+        navigate('/home/customer');
+      } else if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+      return;
+    }
+
+    // Handle Google OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const error = urlParams.get('error');
+    
+    if (error) {
+      toast.error('Google authentication failed');
+      return;
+    }
+    
+    if (token) {
+      localStorage.setItem('token', token);
+      // Fetch user profile
+      authService.getCurrentUser().then(response => {
+        if (response.data?.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          const user = response.data.user;
+          if (user.userType === 'student') {
+            navigate('/home/student');
+          } else if (user.userType === 'customer') {
+            navigate('/home/customer');
+          } else if (user.role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/');
+          }
+          window.location.reload();
+        }
+      }).catch(err => {
+        console.error('Failed to fetch user:', err);
+        toast.error('Failed to complete authentication');
+      });
+      return;
+    }
     
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -36,7 +84,17 @@ export default function Login() {
     const result = await login(formData.email, formData.password);
     if (result.success) {
       toast.success('Login successful!');
-      navigate('/');
+      // Get user from localStorage to determine redirect
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      if (user.userType === 'student') {
+        navigate('/home/student');
+      } else if (user.userType === 'customer') {
+        navigate('/home/customer');
+      } else if (user.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } else {
       toast.error(result.error);
     }

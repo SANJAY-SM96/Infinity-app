@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import authService from '../api/authService';
 import toast from 'react-hot-toast';
+import { FaGoogle, FaGithub, FaFacebook, FaTwitter } from 'react-icons/fa';
 import { 
   FiUser, 
   FiMail, 
@@ -48,12 +50,56 @@ export default function Register() {
       setFormData(prev => ({ ...prev, userType: userTypeParam }));
     }
     
+    // Handle Google OAuth callback
+    const token = params.get('token');
+    if (token) {
+      handleGoogleCallback(token);
+    }
+    
     const handleMouseMove = (e) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isAuthenticated, navigate]);
+
+  const handleGoogleCallback = async (token) => {
+    try {
+      localStorage.setItem('token', token);
+      // Fetch user profile with the token
+      const response = await authService.getCurrentUser();
+      
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        toast.success('Registration successful!');
+        
+        // Navigate based on userType (default to customer for Google auth)
+        const userType = response.data.user?.userType || formData.userType || 'customer';
+        if (userType === 'student') {
+          navigate('/home/student');
+        } else if (userType === 'customer') {
+          navigate('/home/customer');
+        } else {
+          navigate('/');
+        }
+        // Reload to update auth state
+        window.location.reload();
+      } else {
+        throw new Error('Failed to fetch user profile');
+      }
+    } catch (error) {
+      console.error('Google auth callback error:', error);
+      toast.error('Failed to complete Google authentication');
+    }
+  };
+
+  const googleLogin = () => {
+    // Store userType in sessionStorage so we can use it after Google auth
+    sessionStorage.setItem('pendingUserType', formData.userType);
+    sessionStorage.setItem('isRegistration', 'true');
+    // Redirect to Google OAuth with userType and registration flag
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/google?userType=${formData.userType}&registration=true`;
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -79,9 +125,11 @@ export default function Register() {
       toast.success('Account created successfully!');
       // Navigate based on userType
       if (formData.userType === 'student') {
-        navigate('/dashboard/student');
+        navigate('/home/student');
+      } else if (formData.userType === 'customer') {
+        navigate('/home/customer');
       } else {
-        navigate('/products');
+        navigate('/');
       }
     } else {
       toast.error(result.error || 'Registration failed');
@@ -118,6 +166,23 @@ export default function Register() {
   const inputBg = isDark 
     ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400' 
     : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500';
+
+  const SocialButton = useMemo(() => ({ icon: Icon, label, onClick, className }) => (
+    <motion.button
+      whileHover={{ y: -2, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      type="button"
+      className={`flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold border transition ${className} ${
+        isDark 
+          ? 'border-gray-600 bg-gray-800/50 hover:bg-gray-700/50' 
+          : 'border-gray-300 bg-white hover:bg-gray-50'
+      }`}
+    >
+      <Icon className="h-5 w-5" />
+      <span>{label}</span>
+    </motion.button>
+  ), [isDark]);
 
   return (
     <div className={`min-h-screen ${bgClass} ${textClass} overflow-hidden relative`}>
@@ -432,6 +497,41 @@ export default function Register() {
                   )}
                 </motion.button>
               </form>
+
+              {/* Social login */}
+              <div className="mt-8">
+                <div className="relative text-center">
+                  <span className={`px-3 text-xs uppercase tracking-widest ${isDark ? 'text-gray-500' : 'text-gray-400'} bg-transparent`}>
+                    Or continue with
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <SocialButton 
+                    icon={FaGoogle} 
+                    label="Google" 
+                    onClick={googleLogin} 
+                    className={isDark ? 'text-cyan-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'} 
+                  />
+                  <SocialButton 
+                    icon={FaGithub} 
+                    label="GitHub" 
+                    onClick={() => toast('GitHub login coming soon', { icon: '👨‍💻' })} 
+                    className={isDark ? 'text-white/80 hover:text-white' : 'text-gray-700 hover:text-gray-900'} 
+                  />
+                  <SocialButton 
+                    icon={FaFacebook} 
+                    label="Facebook" 
+                    onClick={() => toast('Facebook login coming soon', { icon: '📘' })} 
+                    className={isDark ? 'text-blue-200 hover:text-white' : 'text-blue-600 hover:text-blue-700'} 
+                  />
+                  <SocialButton 
+                    icon={FaTwitter} 
+                    label="Twitter/X" 
+                    onClick={() => toast('Twitter login coming soon', { icon: '🐦' })} 
+                    className={isDark ? 'text-sky-200 hover:text-white' : 'text-sky-600 hover:text-sky-700'} 
+                  />
+                </div>
+              </div>
 
               {/* Login Link */}
               <motion.div

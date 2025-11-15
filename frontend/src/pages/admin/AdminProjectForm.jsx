@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AdminLayout from '../../components/admin/AdminLayout';
 import Loader from '../../components/Loader';
 import { productService } from '../../api/productService';
+import { useTheme } from '../../context/ThemeContext';
 import { FiUpload, FiX, FiImage, FiVideo, FiSave } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
@@ -29,6 +30,7 @@ const categories = [
 export default function AdminProjectForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const isEdit = !!id;
 
   const [loading, setLoading] = useState(isEdit);
@@ -273,15 +275,24 @@ export default function AdminProjectForm() {
     );
   }
 
+  const textClass = isDark ? 'text-white' : 'text-gray-900';
+  const textMuted = isDark ? 'text-gray-400' : 'text-gray-600';
+  const cardBg = isDark 
+    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' 
+    : 'bg-white/80 backdrop-blur-xl border-gray-200';
+  const inputBg = isDark 
+    ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400' 
+    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500';
+
   return (
     <AdminLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className={`text-3xl font-bold mb-2 ${textClass}`}>
             {isEdit ? 'Edit Project' : 'Add New Project'}
           </h1>
-          <p className="text-white/60">
+          <p className={textMuted}>
             {isEdit ? 'Update project details' : 'Create a new project for your store'}
           </p>
         </div>
@@ -291,51 +302,51 @@ export default function AdminProjectForm() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-dark-light to-dark-lighter rounded-xl p-6 border border-primary/20 space-y-6"
+            className={`${cardBg} border rounded-xl p-6 space-y-6`}
           >
             {/* Basic Information */}
             <div>
-              <h2 className="text-xl font-bold text-white mb-4">Basic Information</h2>
+              <h2 className={`text-xl font-bold mb-4 ${textClass}`}>Basic Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Title *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Title *</label>
                   <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Category *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Category *</label>
                   <select
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer`}
                   >
                     {categories.map(cat => (
-                      <option key={cat} value={cat} className="bg-dark-light">{cat}</option>
+                      <option key={cat} value={cat} className={isDark ? 'bg-gray-800' : 'bg-white'}>{cat}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Currency *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Currency *</label>
                   <select
                     name="currency"
                     value={formData.currency}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer`}
                   >
-                    <option value="INR" className="bg-dark-light">INR (₹)</option>
+                    <option value="INR" className={isDark ? 'bg-gray-800' : 'bg-white'}>INR (₹)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Price (₹) *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Price (₹) *</label>
                   <input
                     type="number"
                     name="priceINR"
@@ -350,12 +361,12 @@ export default function AdminProjectForm() {
                     required
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                     placeholder="Enter price in Indian Rupees"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Original Price (₹) <span className="text-white/40">(Optional)</span></label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Original Price (₹) <span className={isDark ? 'text-gray-500' : 'text-gray-500'}>(Optional)</span></label>
                   <input
                     type="number"
                     name="originalPriceINR"
@@ -369,61 +380,61 @@ export default function AdminProjectForm() {
                     }}
                     min="0"
                     step="0.01"
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                     placeholder="Enter original price if on discount"
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Product Type *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Product Type *</label>
                   <select
                     name="productType"
                     value={formData.productType}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer`}
                   >
-                    <option value="digital" className="bg-dark-light">Digital</option>
-                    <option value="physical" className="bg-dark-light">Physical</option>
-                    <option value="both" className="bg-dark-light">Both</option>
+                    <option value="digital" className={isDark ? 'bg-gray-800' : 'bg-white'}>Digital</option>
+                    <option value="physical" className={isDark ? 'bg-gray-800' : 'bg-white'}>Physical</option>
+                    <option value="both" className={isDark ? 'bg-gray-800' : 'bg-white'}>Both</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Delivery Type *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Delivery Type *</label>
                   <select
                     name="deliveryType"
                     value={formData.deliveryType}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition appearance-none cursor-pointer`}
                   >
-                    <option value="instant" className="bg-dark-light">Instant</option>
-                    <option value="custom" className="bg-dark-light">Custom</option>
-                    <option value="both" className="bg-dark-light">Both</option>
+                    <option value="instant" className={isDark ? 'bg-gray-800' : 'bg-white'}>Instant</option>
+                    <option value="custom" className={isDark ? 'bg-gray-800' : 'bg-white'}>Custom</option>
+                    <option value="both" className={isDark ? 'bg-gray-800' : 'bg-white'}>Both</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Delivery Time</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Delivery Time</label>
                   <input
                     type="text"
                     name="deliveryTime"
                     value={formData.deliveryTime}
                     onChange={handleInputChange}
                     placeholder="e.g., Instant Download, 2-4 weeks"
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Brand</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Brand</label>
                   <input
                     type="text"
                     name="brand"
                     value={formData.brand}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                   />
                 </div>
                 <div>
-                  <label className="block text-white/60 text-sm mb-2">Stock *</label>
+                  <label className={`block ${textMuted} text-sm mb-2`}>Stock *</label>
                   <input
                     type="number"
                     name="stock"
@@ -431,7 +442,7 @@ export default function AdminProjectForm() {
                     onChange={handleInputChange}
                     required
                     min="0"
-                    className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                    className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                   />
                 </div>
               </div>
@@ -439,41 +450,68 @@ export default function AdminProjectForm() {
 
             {/* Description */}
             <div>
-              <label className="block text-white/60 text-sm mb-2">Description *</label>
+              <label className={`block ${textMuted} text-sm mb-2`}>Description *</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
                 required
                 rows="4"
-                className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition resize-none"
+                className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition resize-none`}
               />
             </div>
 
             {/* Images */}
             <div>
-              <label className="block text-white/60 text-sm mb-2">Images *</label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                {formData.images.map((image, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={image}
-                      alt={`Product ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border border-primary/20"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition"
+              <label className={`block ${textMuted} text-sm font-semibold mb-3`}>
+                Project Images * <span className="text-xs font-normal">(At least 1 image required)</span>
+              </label>
+              {formData.images.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  {formData.images.map((image, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="relative group"
                     >
-                      <FiX className="text-white" size={16} />
-                    </button>
+                      <div className="relative h-40 overflow-hidden rounded-xl border-2 border-primary/20 bg-gray-100 dark:bg-gray-700">
+                        <img
+                          src={image}
+                          alt={`Product ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                          <motion.button
+                            type="button"
+                            onClick={() => handleRemoveImage(index)}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="opacity-0 group-hover:opacity-100 p-2 bg-red-500 rounded-full transition-all"
+                          >
+                            <FiX className="text-white" size={18} />
+                          </motion.button>
+                        </div>
+                      </div>
+                      <p className="text-xs text-center mt-1 text-gray-500">Image {index + 1}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+              <label className={`flex flex-col items-center justify-center gap-3 px-6 py-8 border-2 border-dashed ${isDark ? 'border-gray-600' : 'border-gray-300'} rounded-xl cursor-pointer hover:border-primary/50 transition ${isDark ? 'bg-gray-700/30 hover:bg-gray-700/50' : 'bg-gray-50 hover:bg-gray-100'} ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <div className="flex flex-col items-center gap-2">
+                  <div className={`p-3 rounded-full ${isDark ? 'bg-gray-800' : 'bg-white'} border-2 ${isDark ? 'border-gray-600' : 'border-gray-300'}`}>
+                    <FiUpload className={`${uploading ? 'text-gray-400' : 'text-primary'}`} size={24} />
                   </div>
-                ))}
-              </div>
-              <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-primary/30 rounded-lg cursor-pointer hover:border-primary/50 transition">
-                <FiUpload className="text-primary" size={20} />
-                <span className="text-white/60">Upload Images</span>
+                  <div className="text-center">
+                    <span className={`${textMuted} font-semibold block`}>
+                      {uploading ? 'Uploading...' : 'Click to Upload Images'}
+                    </span>
+                    <span className={`${textMuted} text-xs mt-1 block`}>
+                      PNG, JPG, WEBP up to 10MB
+                    </span>
+                  </div>
+                </div>
                 <input
                   type="file"
                   accept="image/*"
@@ -483,30 +521,35 @@ export default function AdminProjectForm() {
                   disabled={uploading}
                 />
               </label>
+              {formData.images.length === 0 && (
+                <p className={`text-xs mt-2 ${isDark ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                  ⚠️ Please upload at least one image for your project
+                </p>
+              )}
             </div>
 
             {/* Demo Video */}
             <div>
-              <label className="block text-white/60 text-sm mb-2">Demo Video URL</label>
+              <label className={`block ${textMuted} text-sm mb-2`}>Demo Video URL</label>
               <input
                 type="url"
                 name="demoVideo"
                 value={formData.demoVideo}
                 onChange={handleInputChange}
                 placeholder="https://www.youtube.com/watch?v=..."
-                className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
               />
               {formData.demoVideo && (
-                <div className="mt-2 p-2 bg-dark/50 rounded-lg">
+                <div className={`mt-2 p-2 ${isDark ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-lg`}>
                   <FiVideo className="text-primary inline mr-2" size={16} />
-                  <span className="text-white/60 text-sm">{formData.demoVideo}</span>
+                  <span className={textMuted} style={{ fontSize: '0.875rem' }}>{formData.demoVideo}</span>
                 </div>
               )}
             </div>
 
             {/* Tech Stack */}
             <div>
-              <label className="block text-white/60 text-sm mb-2">Tech Stack</label>
+              <label className={`block ${textMuted} text-sm mb-2`}>Tech Stack</label>
               <div className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -519,7 +562,7 @@ export default function AdminProjectForm() {
                     }
                   }}
                   placeholder="e.g., React, Node.js, MongoDB"
-                  className="flex-1 px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                  className={`flex-1 px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                 />
                 <button
                   type="button"
@@ -550,7 +593,7 @@ export default function AdminProjectForm() {
 
             {/* Features */}
             <div>
-              <label className="block text-white/60 text-sm mb-2">Features</label>
+              <label className={`block ${textMuted} text-sm mb-2`}>Features</label>
               <div className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -563,7 +606,7 @@ export default function AdminProjectForm() {
                     }
                   }}
                   placeholder="e.g., User authentication, Payment gateway"
-                  className="flex-1 px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                  className={`flex-1 px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                 />
                 <button
                   type="button"
@@ -594,7 +637,7 @@ export default function AdminProjectForm() {
 
             {/* Specifications */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-3">Specifications</h3>
+              <h3 className={`text-lg font-semibold mb-3 ${textClass}`}>Specifications</h3>
               <div className="space-y-3">
                 {Object.entries(formData.specifications).map(([key, value]) => (
                   <div key={key} className="grid grid-cols-2 gap-3">
@@ -608,7 +651,7 @@ export default function AdminProjectForm() {
                         newSpecs[e.target.value] = value;
                         setFormData(prev => ({ ...prev, specifications: newSpecs }));
                       }}
-                      className="px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                      className={`px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                     />
                     <div className="flex gap-2">
                       <input
@@ -616,7 +659,7 @@ export default function AdminProjectForm() {
                         placeholder="Value"
                         value={value}
                         onChange={(e) => handleSpecificationChange(key, e.target.value)}
-                        className="flex-1 px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                        className={`flex-1 px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                       />
                       <button
                         type="button"
@@ -645,25 +688,25 @@ export default function AdminProjectForm() {
             {/* Additional Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-white/60 text-sm mb-2">Warranty</label>
+                <label className={`block ${textMuted} text-sm mb-2`}>Warranty</label>
                 <input
                   type="text"
                   name="warranty"
                   value={formData.warranty}
                   onChange={handleInputChange}
                   placeholder="e.g., 1 Year"
-                  className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                  className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                 />
               </div>
               <div>
-                <label className="block text-white/60 text-sm mb-2">Returns Policy</label>
+                <label className={`block ${textMuted} text-sm mb-2`}>Returns Policy</label>
                 <input
                   type="text"
                   name="returnsPolicy"
                   value={formData.returnsPolicy}
                   onChange={handleInputChange}
                   placeholder="e.g., 30 Days"
-                  className="w-full px-4 py-2 bg-dark border border-primary/20 rounded-lg text-white focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition"
+                  className={`w-full px-4 py-2 ${inputBg} rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition`}
                 />
               </div>
             </div>
@@ -676,9 +719,9 @@ export default function AdminProjectForm() {
                   name="isFeatured"
                   checked={formData.isFeatured}
                   onChange={handleInputChange}
-                  className="w-4 h-4 rounded border-primary/20 bg-dark text-primary focus:ring-primary/20"
+                  className={`w-4 h-4 rounded border-primary/20 ${isDark ? 'bg-gray-700' : 'bg-white'} text-primary focus:ring-primary/20`}
                 />
-                <span className="text-white/60">Featured Product</span>
+                <span className={textMuted}>Featured Product</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -686,9 +729,9 @@ export default function AdminProjectForm() {
                   name="isActive"
                   checked={formData.isActive}
                   onChange={handleInputChange}
-                  className="w-4 h-4 rounded border-primary/20 bg-dark text-primary focus:ring-primary/20"
+                  className={`w-4 h-4 rounded border-primary/20 ${isDark ? 'bg-gray-700' : 'bg-white'} text-primary focus:ring-primary/20`}
                 />
-                <span className="text-white/60">Active</span>
+                <span className={textMuted}>Active</span>
               </label>
             </div>
           </motion.div>
@@ -698,14 +741,14 @@ export default function AdminProjectForm() {
             <button
               type="button"
               onClick={() => navigate('/admin/projects')}
-              className="flex-1 px-6 py-3 bg-dark-light border border-primary/20 rounded-lg text-white hover:bg-dark transition"
+              className={`flex-1 px-6 py-3 ${isDark ? 'bg-gray-800 border-gray-700' : 'bg-gray-100 border-gray-300'} border rounded-lg ${textClass} hover:opacity-80 transition`}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || uploading}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-pink-500 text-white rounded-lg font-semibold hover:from-cyan-400 hover:to-pink-400 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {saving ? (
                 <>Saving...</>

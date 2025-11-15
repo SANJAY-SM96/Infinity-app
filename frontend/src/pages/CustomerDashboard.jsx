@@ -93,16 +93,53 @@ export default function CustomerDashboard() {
   return (
     <div className={`min-h-screen ${bgClass} ${textClass} py-12`}>
       <div className="max-w-7xl mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Customer Dashboard
-            </span>
-          </h1>
-          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            Browse, purchase, and download IT projects
-          </p>
-        </div>
+        {/* Welcome Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`${cardBg} border rounded-2xl p-8 mb-8 bg-gradient-to-r ${isDark ? 'from-gray-800/50 to-gray-700/50' : 'from-blue-50/50 to-indigo-50/50'}`}
+        >
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-3">
+                <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  Welcome, {user?.name || 'Customer'}! 👋
+                </span>
+              </h1>
+              <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                Browse, purchase, and download ready-made IT projects for your business needs
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Total Purchases</p>
+                  <p className={`text-2xl font-bold ${textClass}`}>{orders.length}</p>
+                </div>
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Total Spent</p>
+                  <p className={`text-2xl font-bold text-green-500`}>
+                    ₹{orders.reduce((sum, order) => sum + (order.total || 0), 0).toFixed(0)}
+                  </p>
+                </div>
+                <div className={`px-4 py-2 rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
+                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Active Orders</p>
+                  <p className={`text-2xl font-bold text-blue-500`}>
+                    {orders.filter(o => o.orderStatus !== 'Delivered').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <Link to="/products">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-3 whitespace-nowrap"
+              >
+                <FiShoppingBag size={24} />
+                Browse Projects
+              </motion.button>
+            </Link>
+          </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           {/* Profile Card */}

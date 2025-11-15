@@ -19,6 +19,30 @@ export default function Navbar({ isHomePage = false }) {
     navigate('/');
   };
 
+  const getHomePath = () => {
+    if (!isAuthenticated || !user) {
+      return '/';
+    }
+    
+    // Admin users go to admin dashboard
+    if (user.role === 'admin') {
+      return '/admin';
+    }
+    
+    // Students go to student home
+    if (user.userType === 'student') {
+      return '/home/student';
+    }
+    
+    // Customers go to customer home
+    if (user.userType === 'customer') {
+      return '/home/customer';
+    }
+    
+    // Default to main home
+    return '/';
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -63,7 +87,7 @@ export default function Navbar({ isHomePage = false }) {
           }}
         >
           {/* Logo */}
-          <Link to="/" className={`relative z-10 text-2xl font-extrabold tracking-tight ${textColor}`}>
+          <Link to={getHomePath()} className={`relative z-10 text-2xl font-extrabold tracking-tight ${textColor}`}>
             <span className={`text-transparent bg-clip-text ${logoGradient}`}>∞ INFINITY</span>
           </Link>
 
