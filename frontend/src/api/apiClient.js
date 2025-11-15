@@ -7,9 +7,9 @@ const getApiUrl = () => {
     return import.meta.env.VITE_API_URL;
   }
   
-  // In production, use Render backend URL
+  // In production, use backend API URL
   if (import.meta.env.PROD) {
-    return 'https://infinity-apps.onrender.com/api';
+    return 'https://www.api.infinitywebtechnology.com/api';
   }
   
   // Development: use local backend

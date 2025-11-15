@@ -43,7 +43,7 @@ const corsOptions = {
     }
     
     // In production, use CLIENT_URL from environment
-    const allowedOrigins = process.env.CLIENT_URL 
+    let allowedOrigins = process.env.CLIENT_URL 
       ? process.env.CLIENT_URL.split(',').map(url => url.trim())
       : [
           'https://infinity-app-rn91.onrender.com',
@@ -52,15 +52,33 @@ const corsOptions = {
           'http://localhost:5173'
         ];
     
+    // Always include the known frontend URLs even if CLIENT_URL is set
+    const knownFrontendUrls = [
+      'https://infinity-app-rn91.onrender.com',
+      'https://infinity-apps.onrender.com'
+    ];
+    knownFrontendUrls.forEach(url => {
+      if (allowedOrigins.indexOf(url) === -1) {
+        allowedOrigins.push(url);
+      }
+    });
+    
+    // Log for debugging
+    console.log(`CORS check - Origin: ${origin}, Allowed: ${allowedOrigins.join(', ')}`);
+    
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
