@@ -45,7 +45,12 @@ const corsOptions = {
     // In production, use CLIENT_URL from environment
     const allowedOrigins = process.env.CLIENT_URL 
       ? process.env.CLIENT_URL.split(',').map(url => url.trim())
-      : ['https://infinity-apps.onrender.com', 'http://localhost:3000'];
+      : [
+          'https://infinity-app-rn91.onrender.com',
+          'https://infinity-apps.onrender.com', 
+          'http://localhost:3000',
+          'http://localhost:5173'
+        ];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
