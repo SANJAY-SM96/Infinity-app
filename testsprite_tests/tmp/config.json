@@ -1,0 +1,8 @@
+{
+  "status": "init",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:5000/",
+  "loginUser": "admin@infinity.com",
+  "loginPassword": "admin123"
+}

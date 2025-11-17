@@ -1,0 +1,139 @@
+# robots.txt for Infinity IT Project Marketplace
+# https://infinitywebtechnology.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /checkout
+Disallow: /cart
+Disallow: /verify-otp
+Disallow: /login
+Disallow: /register
+Disallow: /*?*session=
+Disallow: /*?*token=
+Disallow: /*?*private=
+
+# Allow specific public pages
+Allow: /products
+Allow: /products/*
+Allow: /blog
+Allow: /blog/*
+Allow: /about
+Allow: /contact
+Allow: /terms-and-conditions
+Allow: /privacy-policy
+Allow: /shipping-policy
+Allow: /cancellations-and-refunds
+
+# Sitemap
+Sitemap: https://infinitywebtechnology.com/sitemap.xml
+
+# Crawl-delay for aggressive bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: SemrushBot
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: DotBot
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: MJ12bot
+Crawl-delay: 10
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Allow all major search engines - Full access
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: Baiduspider
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+User-agent: Yandex
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+# Block bad bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+# Social media crawlers - Allow public content
+User-agent: facebookexternalhit
+Allow: /products
+Allow: /blog
+Allow: /about
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: Twitterbot
+Allow: /products
+Allow: /blog
+Allow: /about
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: LinkedInBot
+Allow: /products
+Allow: /blog
+Allow: /about
+Disallow: /admin/
+Disallow: /dashboard/
+
+User-agent: WhatsApp
+Allow: /products
+Allow: /blog
+Disallow: /admin/
+Disallow: /dashboard/
+
+# Block AI training crawlers (optional - uncomment if needed)
+# User-agent: GPTBot
+# Disallow: /
+
+# User-agent: ChatGPT-User
+# Disallow: /
+
+# User-agent: CCBot
+# Disallow: /
+
