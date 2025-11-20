@@ -1,7 +1,7 @@
 # INFINITY App - Development Server Starter Script
 # This script starts both backend and frontend servers
 
-Write-Host "🚀 Starting INFINITY App Development Servers..." -ForegroundColor Cyan
+Write-Host "Starting INFINITY App Development Servers..." -ForegroundColor Cyan
 Write-Host ""
 
 # Check if Node.js is installed
@@ -83,7 +83,7 @@ Write-Host "📍 Frontend: http://localhost:3000" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "⏳ Please wait a few seconds for servers to fully start..." -ForegroundColor Yellow
 Write-Host ""
-Write-Host "💡 Tips:" -ForegroundColor Yellow
+Write-Host "Tips:" -ForegroundColor Yellow
 Write-Host "   - Backend will run in a new PowerShell window" -ForegroundColor White
 Write-Host "   - Frontend will run in a new PowerShell window" -ForegroundColor White
 Write-Host "   - Close those windows to stop the servers" -ForegroundColor White

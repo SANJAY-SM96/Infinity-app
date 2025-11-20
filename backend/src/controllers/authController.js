@@ -4,6 +4,9 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 const sendEmail = require('../utils/sendEmail');
 
+const getFrontendUrl = require('../utils/urlUtils');
+console.log('[authController] getFrontendUrl imported:', typeof getFrontendUrl);
+
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, userType } = req.body;
@@ -63,7 +66,7 @@ exports.loginUser = async (req, res, next) => {
     if (process.env.NODE_ENV === 'development') {
       console.error('[Login Controller] Missing credentials:', { email: !!email, password: !!password });
     }
-    return res.status(400).json({ 
+    return res.status(400).json({
       message: 'Email and password are required',
       received: {
         email: !!email,
@@ -278,25 +281,11 @@ exports.googleAuth = (req, res, next) => {
   const userType = req.query.userType || 'customer';
   const isRegistration = req.query.registration === 'true' || req.headers.referer?.includes('/register');
   const state = JSON.stringify({ userType, isRegistration });
-  
-  passport.authenticate('google', { 
+
+  passport.authenticate('google', {
     scope: ['profile', 'email'],
     state: Buffer.from(state).toString('base64') // Encode state as base64
   })(req, res, next);
-};
-
-// Helper function to get the frontend URL (handles comma-separated CLIENT_URL)
-const getFrontendUrl = () => {
-  if (process.env.CLIENT_URL) {
-    // Handle comma-separated URLs - use the first one
-    const urls = process.env.CLIENT_URL.split(',').map(url => url.trim());
-    return urls[0]; // Use first URL as primary
-  }
-  // Default fallbacks based on environment
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://www.infinitywebtechnology.com';
-  }
-  return 'http://localhost:5173'; // Default to Vite dev server
 };
 
 // @desc    Get Google OAuth configuration (debug endpoint)
@@ -305,7 +294,7 @@ const getFrontendUrl = () => {
 exports.getGoogleOAuthConfig = (req, res) => {
   const googleStrategy = require('../config/googleStrategy');
   const callbackInfo = googleStrategy.getCallbackURL ? googleStrategy.getCallbackURL() : null;
-  
+
   if (!callbackInfo || !callbackInfo.isConfigured) {
     return res.status(503).json({
       success: false,
@@ -313,7 +302,7 @@ exports.getGoogleOAuthConfig = (req, res) => {
       configured: false
     });
   }
-  
+
   res.json({
     success: true,
     configured: true,
@@ -339,12 +328,12 @@ exports.getGoogleOAuthConfig = (req, res) => {
 exports.googleAuthCallback = (req, res, next) => {
   // Check if Google OAuth is configured
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    const frontendUrl = getFrontendUrl();
+    const frontendUrl = getFrontendUrl(req);
     return res.redirect(`${frontendUrl}/login?error=google_oauth_not_configured`);
   }
 
   let stateData = { userType: 'customer', isRegistration: false };
-  
+
   // Decode state if provided
   if (req.query.state) {
     try {
@@ -353,20 +342,20 @@ exports.googleAuthCallback = (req, res, next) => {
       console.error('Error decoding state:', err);
     }
   }
-  
+
   const redirectPath = stateData.isRegistration ? '/register' : '/login';
-  const frontendUrl = getFrontendUrl();
-  
+  const frontendUrl = getFrontendUrl(req);
+
   // Get the configured callback URL for error messages
   const googleStrategy = require('../config/googleStrategy');
   const callbackInfo = googleStrategy.getCallbackURL ? googleStrategy.getCallbackURL() : null;
   const configuredCallbackURL = callbackInfo?.callbackURL || 'unknown';
-  
+
   passport.authenticate('google', { failureRedirect: `${frontendUrl}${redirectPath}?error=google_auth_failed` }, async (err, user) => {
     if (err) {
       console.error('Google OAuth authentication error:', err);
       console.error(`Configured callback URL: ${configuredCallbackURL}`);
-      
+
       // Handle specific OAuth errors
       let errorMessage = 'google_auth_failed';
       if (err.message?.includes('redirect_uri_mismatch')) {
@@ -378,7 +367,7 @@ exports.googleAuthCallback = (req, res, next) => {
       } else if (err.message?.includes('deleted_client') || err.message?.includes('invalid_client')) {
         errorMessage = 'invalid_client';
       }
-      
+
       // Include callback URL in error for debugging
       const errorParams = new URLSearchParams({
         error: errorMessage,

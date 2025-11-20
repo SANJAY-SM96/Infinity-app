@@ -8,6 +8,8 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const path = require('path');
+const fs = require('fs');
 const { errorHandler } = require('./src/middleware/errorHandler');
 const connectDB = require('./src/config/db');
 
@@ -268,6 +270,25 @@ app.get('/health', (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date() });
 });
 
+// Diagnostic endpoint to check frontend serving status
+app.get('/api/diagnostics/frontend', (req, res) => {
+  const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../frontend/dist');
+  const resolvedFrontendPath = path.resolve(frontendPath);
+  const indexPath = path.join(resolvedFrontendPath, 'index.html');
+  
+  const diagnostics = {
+    nodeEnv: process.env.NODE_ENV || 'not set',
+    serveFrontend: process.env.SERVE_FRONTEND || 'not set',
+    frontendPath: frontendPath,
+    resolvedFrontendPath: resolvedFrontendPath,
+    frontendDirExists: fs.existsSync(resolvedFrontendPath),
+    indexHtmlExists: fs.existsSync(indexPath),
+    willServeFrontend: process.env.SERVE_FRONTEND !== 'false' && (process.env.NODE_ENV === 'production' || fs.existsSync(resolvedFrontendPath))
+  };
+  
+  res.json(diagnostics);
+});
+
 // Root API endpoint
 app.get('/api', (req, res) => {
   res.json({ 
@@ -308,10 +329,103 @@ app.use('/api/blogs', require('./src/routes/blogs'));
 app.use('/api/seo', require('./src/routes/seo'));
 app.use('/api/seo-content', require('./src/routes/seoContent'));
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
+// Serve frontend static files (only in production or if FRONTEND_PATH is set)
+const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../frontend/dist');
+const resolvedFrontendPath = path.resolve(frontendPath);
+const isProduction = process.env.NODE_ENV === 'production';
+const frontendExists = fs.existsSync(resolvedFrontendPath);
+const indexPath = frontendExists ? path.join(resolvedFrontendPath, 'index.html') : null;
+const indexHtmlExists = indexPath && fs.existsSync(indexPath);
+
+// Determine if we should serve frontend
+// Serve if: (production mode) OR (frontend exists) AND (not explicitly disabled)
+const serveFrontend = process.env.SERVE_FRONTEND !== 'false' && (isProduction || frontendExists);
+
+// Log status
+console.log('\n📦 Frontend Serving Status:');
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`SERVE_FRONTEND: ${process.env.SERVE_FRONTEND || 'not set (default: auto)'}`);
+console.log(`Frontend Path: ${resolvedFrontendPath}`);
+console.log(`Directory Exists: ${frontendExists ? '✅' : '❌'}`);
+console.log(`index.html Exists: ${indexHtmlExists ? '✅' : '❌'}`);
+console.log(`Will Serve Frontend: ${serveFrontend && indexHtmlExists ? '✅ YES' : '❌ NO'}`);
+
+if (serveFrontend && indexHtmlExists) {
+  console.log(`\n✅ Serving frontend from: ${resolvedFrontendPath}\n`);
+  
+  // Serve static files from frontend dist
+  app.use(express.static(resolvedFrontendPath, {
+    maxAge: '1y', // Cache static assets for 1 year
+    etag: true,
+    lastModified: true,
+    index: false // Don't serve index.html for directory requests, we'll handle it explicitly
+  }));
+
+  // SPA fallback: serve index.html for all non-API routes
+  // This must be after all API routes but before the 404 handler
+  // Handle all HTTP methods to support client-side routing
+  app.all('*', (req, res, next) => {
+    // Skip API routes, uploads, health check, and diagnostics
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path === '/health') {
+      return next();
+    }
+    
+    // For non-GET requests to non-API routes, return 404 (these should go to API)
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      return res.status(404).json({ 
+        message: 'Route not found',
+        hint: 'Non-GET requests should be sent to /api/* endpoints'
+      });
+    }
+    
+    // Serve index.html for all GET/HEAD requests (SPA routing)
+    res.sendFile(path.resolve(indexPath));
+  });
+} else {
+  if (!isProduction) {
+    console.log('\n⚠️  Frontend serving disabled (development mode)');
+    console.log('   Frontend should be served by Vite dev server on port 3000\n');
+  } else if (!frontendExists) {
+    console.log('\n❌ Frontend build directory not found!');
+    console.log(`   Expected at: ${resolvedFrontendPath}`);
+    console.log('   To fix: cd frontend && npm install && npm run build\n');
+  } else if (!indexHtmlExists) {
+    console.log('\n❌ Frontend index.html not found!');
+    console.log(`   Expected at: ${indexPath}`);
+    console.log('   To fix: cd frontend && npm install && npm run build\n');
+  } else {
+    console.log('\n⚠️  Frontend serving disabled (SERVE_FRONTEND=false)\n');
+  }
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+}
+
+// 404 Handler for API routes only (if frontend is not being served)
+// Only add this handler if we're not serving the frontend
+if (!serveFrontend || !indexHtmlExists) {
+  app.use((req, res) => {
+    // Only handle API routes with 404 JSON response
+    if (req.path.startsWith('/api')) {
+      res.status(404).json({ message: 'Route not found' });
+    } else {
+      // For non-API routes when frontend is not served, provide helpful message
+      res.status(404).json({ 
+        message: 'Route not found. Frontend is not being served from this server.',
+        hint: 'If you want to serve the frontend, set SERVE_FRONTEND=true and build the frontend.'
+      });
+    }
+  });
+} else {
+  // When serving frontend, only handle API 404s
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      res.status(404).json({ message: 'API route not found' });
+    } else {
+      // Let the SPA handle other routes
+      next();
+    }
+  });
+}
 
 // Error Handler (must be last)
 app.use(errorHandler);
