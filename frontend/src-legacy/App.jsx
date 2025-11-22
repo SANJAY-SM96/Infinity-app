@@ -14,41 +14,42 @@ import LogoutAnimation from './components/LogoutAnimation';
 import LoginAnimation from './components/LoginAnimation';
 
 // Pages
-import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import ProductList from './pages/ProductList';
-import ProductDetails from './pages/ProductDetails';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import Login from './pages/Login';
-import Register from './pages/Register.jsx';
-import OTPVerification from './pages/OTPVerification';
-import UserDashboard from './pages/UserDashboard';
-import StudentDashboard from './pages/StudentDashboard';
-import CustomerDashboard from './pages/CustomerDashboard';
-import OrderDetails from './pages/OrderDetails';
-import StudentHome from './pages/StudentHome';
-import CustomerHome from './pages/CustomerHome';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminProjects from './pages/admin/AdminProjects';
-import AdminProjectForm from './pages/admin/AdminProjectForm';
-import AdminOrders from './pages/admin/AdminOrders';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminAnalytics from './pages/admin/AdminAnalytics';
-import AdminSettings from './pages/admin/AdminSettings';
-import AdminOAuthConfig from './pages/admin/AdminOAuthConfig';
-import AdminProjectRequests from './pages/admin/AdminProjectRequests';
-import AdminSEOTools from './pages/admin/AdminSEOTools';
-import AdminSEOContent from './pages/admin/AdminSEOContent';
-import AdminBlogs from './pages/admin/AdminBlogs';
-import AdminBlogForm from './pages/admin/AdminBlogForm';
-import BlogList from './pages/BlogList';
-import BlogDetail from './pages/BlogDetail';
-import TermsAndConditions from './pages/TermsAndConditions';
-import ShippingPolicy from './pages/ShippingPolicy';
-import CancellationsAndRefunds from './pages/CancellationsAndRefunds';
-import SelectRole from './pages/SelectRole';
+// Pages - Lazy Loaded
+const Home = React.lazy(() => import('./pages/Home'));
+const About = React.lazy(() => import('./pages/About'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const ProductList = React.lazy(() => import('./pages/ProductList'));
+const ProductDetails = React.lazy(() => import('./pages/ProductDetails'));
+const Cart = React.lazy(() => import('./pages/Cart'));
+const Checkout = React.lazy(() => import('./pages/Checkout'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Register = React.lazy(() => import('./pages/Register.jsx'));
+const OTPVerification = React.lazy(() => import('./pages/OTPVerification'));
+const UserDashboard = React.lazy(() => import('./pages/UserDashboard'));
+const StudentDashboard = React.lazy(() => import('./pages/StudentDashboard'));
+const CustomerDashboard = React.lazy(() => import('./pages/CustomerDashboard'));
+const OrderDetails = React.lazy(() => import('./pages/OrderDetails'));
+const StudentHome = React.lazy(() => import('./pages/StudentHome'));
+const CustomerHome = React.lazy(() => import('./pages/CustomerHome'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const AdminProjects = React.lazy(() => import('./pages/admin/AdminProjects'));
+const AdminProjectForm = React.lazy(() => import('./pages/admin/AdminProjectForm'));
+const AdminOrders = React.lazy(() => import('./pages/admin/AdminOrders'));
+const AdminUsers = React.lazy(() => import('./pages/admin/AdminUsers'));
+const AdminAnalytics = React.lazy(() => import('./pages/admin/AdminAnalytics'));
+const AdminSettings = React.lazy(() => import('./pages/admin/AdminSettings'));
+const AdminOAuthConfig = React.lazy(() => import('./pages/admin/AdminOAuthConfig'));
+const AdminProjectRequests = React.lazy(() => import('./pages/admin/AdminProjectRequests'));
+const AdminSEOTools = React.lazy(() => import('./pages/admin/AdminSEOTools'));
+const AdminSEOContent = React.lazy(() => import('./pages/admin/AdminSEOContent'));
+const AdminBlogs = React.lazy(() => import('./pages/admin/AdminBlogs'));
+const AdminBlogForm = React.lazy(() => import('./pages/admin/AdminBlogForm'));
+const BlogList = React.lazy(() => import('./pages/BlogList'));
+const BlogDetail = React.lazy(() => import('./pages/BlogDetail'));
+const TermsAndConditions = React.lazy(() => import('./pages/TermsAndConditions'));
+const ShippingPolicy = React.lazy(() => import('./pages/ShippingPolicy'));
+const CancellationsAndRefunds = React.lazy(() => import('./pages/CancellationsAndRefunds'));
+const SelectRole = React.lazy(() => import('./pages/SelectRole'));
 
 // Lazy load PrivacyPolicy to avoid ad blocker issues
 const PrivacyPolicy = React.lazy(() =>
@@ -90,229 +91,230 @@ function AppRoutes() {
     } else if (userData.role === 'admin') {
       return <Navigate to="/admin" replace />;
     }
-
-    return <Navigate to="/" replace />;
+    return null;
   };
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/products" element={<ProductList />} />
-      <Route path="/products/:id" element={<ProductDetails />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-            <Checkout />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={isAuthenticated ? <AuthRedirect /> : <Login />}
-      />
-      <Route
-        path="/register"
-        element={isAuthenticated ? <AuthRedirect /> : <Register />}
-      />
-      <Route
-        path="/verify-otp"
-        element={isAuthenticated ? <Navigate to="/" /> : <OTPVerification />}
-      />
-      <Route
-        path="/select-role"
-        element={
-          <ProtectedRoute>
-            <SelectRole />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <UserDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/student"
-        element={
-          <ProtectedRoute>
-            <StudentDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/customer"
-        element={
-          <ProtectedRoute>
-            <CustomerDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/orders/:id"
-        element={
-          <ProtectedRoute>
-            <OrderDetails />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/home/student"
-        element={
-          <ProtectedRoute>
-            <StudentHome />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/home/customer"
-        element={
-          <ProtectedRoute>
-            <CustomerHome />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin"
-        element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/projects"
-        element={
-          <AdminRoute>
-            <AdminProjects />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/projects/add"
-        element={
-          <AdminRoute>
-            <AdminProjectForm />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/projects/edit/:id"
-        element={
-          <AdminRoute>
-            <AdminProjectForm />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/orders"
-        element={
-          <AdminRoute>
-            <AdminOrders />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <AdminRoute>
-            <AdminUsers />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/analytics"
-        element={
-          <AdminRoute>
-            <AdminAnalytics />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/settings"
-        element={
-          <AdminRoute>
-            <AdminSettings />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/oauth-config"
-        element={
-          <AdminRoute>
-            <AdminOAuthConfig />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/project-requests"
-        element={
-          <AdminRoute>
-            <AdminProjectRequests />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/seo-tools"
-        element={
-          <AdminRoute>
-            <AdminSEOTools />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/seo-content"
-        element={
-          <AdminRoute>
-            <AdminSEOContent />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/blogs"
-        element={
-          <AdminRoute>
-            <AdminBlogs />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/blogs/new"
-        element={
-          <AdminRoute>
-            <AdminBlogForm />
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/blogs/edit/:id"
-        element={
-          <AdminRoute>
-            <AdminBlogForm />
-          </AdminRoute>
-        }
-      />
-      <Route path="/blog" element={<BlogList />} />
-      <Route path="/blog/:slug" element={<BlogDetail />} />
-      <Route
-        path="/privacy-policy"
-        element={
-          <Suspense fallback={<Loader />}>
-            <PrivacyPolicy />
-          </Suspense>
-        }
-      />
-      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
-      <Route path="/shipping-policy" element={<ShippingPolicy />} />
-      <Route path="/cancellations-and-refunds" element={<CancellationsAndRefunds />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <Suspense fallback={<Loader />}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={isAuthenticated ? <AuthRedirect /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={isAuthenticated ? <AuthRedirect /> : <Register />}
+        />
+        <Route
+          path="/verify-otp"
+          element={isAuthenticated ? <Navigate to="/" /> : <OTPVerification />}
+        />
+        <Route
+          path="/select-role"
+          element={
+            <ProtectedRoute>
+              <SelectRole />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/student"
+          element={
+            <ProtectedRoute>
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/customer"
+          element={
+            <ProtectedRoute>
+              <CustomerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/home/student"
+          element={
+            <ProtectedRoute>
+              <StudentHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/home/customer"
+          element={
+            <ProtectedRoute>
+              <CustomerHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/projects"
+          element={
+            <AdminRoute>
+              <AdminProjects />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/projects/add"
+          element={
+            <AdminRoute>
+              <AdminProjectForm />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/projects/edit/:id"
+          element={
+            <AdminRoute>
+              <AdminProjectForm />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminRoute>
+              <AdminOrders />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsers />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <AdminRoute>
+              <AdminAnalytics />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/settings"
+          element={
+            <AdminRoute>
+              <AdminSettings />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/oauth-config"
+          element={
+            <AdminRoute>
+              <AdminOAuthConfig />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/project-requests"
+          element={
+            <AdminRoute>
+              <AdminProjectRequests />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/seo-tools"
+          element={
+            <AdminRoute>
+              <AdminSEOTools />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/seo-content"
+          element={
+            <AdminRoute>
+              <AdminSEOContent />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/blogs"
+          element={
+            <AdminRoute>
+              <AdminBlogs />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/blogs/new"
+          element={
+            <AdminRoute>
+              <AdminBlogForm />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/blogs/edit/:id"
+          element={
+            <AdminRoute>
+              <AdminBlogForm />
+            </AdminRoute>
+          }
+        />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogDetail />} />
+        <Route
+          path="/privacy-policy"
+          element={
+            <Suspense fallback={<Loader />}>
+              <PrivacyPolicy />
+            </Suspense>
+          }
+        />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/cancellations-and-refunds" element={<CancellationsAndRefunds />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes >
+    </Suspense >
   );
 }
 

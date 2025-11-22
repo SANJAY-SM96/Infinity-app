@@ -354,16 +354,16 @@ export default function Home() {
               </div>
 
               {/* Sub-headline */}
-              <motion.h4
+              <motion.h2
                 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight ${isDark ? 'text-slate-100' : 'text-slate-900'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
               >
                 Ready-made IT Projects
                 <br />
                 With Full Source Code
-              </motion.h4>
+              </motion.h2>
 
               {/* Body Text */}
               <motion.p
@@ -1054,6 +1054,7 @@ export default function Home() {
                       }}
                       whileHover={{ x: 5 }}
                       className="text-primary hover:text-primary-dark transition-colors"
+                      aria-label={`View ${repo.name} projects`}
                     >
                       <FiExternalLink className="w-[18px] h-[18px] sm:w-5 sm:h-5" />
                     </motion.a>
