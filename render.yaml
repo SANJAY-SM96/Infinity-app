@@ -11,4 +11,4 @@ services:
       - key: SERVE_FRONTEND
         value: true
       - key: FRONTEND_PATH
-        value: ./frontend/dist
+        value: ../frontend/dist

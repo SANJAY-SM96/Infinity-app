@@ -68,87 +68,8 @@ export default defineConfig({
     rollupOptions: {
       input: './index.html',
       output: {
-        manualChunks: (id) => {
-          // Separate vendor chunks for better caching
-          if (id.includes('node_modules')) {
-            // React ecosystem (largest, most stable)
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('react-router') || id.includes('react-router-dom')) {
-              return 'router-vendor';
-            }
-
-            // UI/Animation libraries
-            if (id.includes('framer-motion')) {
-              return 'animation-vendor';
-            }
-            if (id.includes('react-icons')) {
-              return 'icons-vendor';
-            }
-
-            // Utility libraries
-            if (id.includes('axios')) {
-              return 'http-vendor';
-            }
-            if (id.includes('react-hot-toast') || id.includes('react-toastify')) {
-              return 'toast-vendor';
-            }
-
-            // Charts and visualization
-            if (id.includes('chart') || id.includes('recharts') || id.includes('d3')) {
-              return 'charts-vendor';
-            }
-
-            // Form libraries
-            if (id.includes('formik') || id.includes('yup') || id.includes('react-hook-form')) {
-              return 'forms-vendor';
-            }
-
-            // Date/Time libraries
-            if (id.includes('date-fns') || id.includes('moment') || id.includes('dayjs')) {
-              return 'datetime-vendor';
-            }
-
-            // State management
-            if (id.includes('redux') || id.includes('zustand') || id.includes('jotai')) {
-              return 'state-vendor';
-            }
-
-            // Helmet/SEO
-            if (id.includes('helmet')) {
-              return 'seo-vendor';
-            }
-
-            // Admin/Dashboard specific libraries
-            if (id.includes('/pages/admin') || id.includes('AdminDashboard')) {
-              return 'page-admin';
-            }
-
-            // Other vendor libraries (catch-all for remaining dependencies)
-            return 'vendor';
-          }
-
-          // Split pages into separate chunks for lazy loading
-          if (id.includes('/pages/')) {
-            const pageName = id.split('/pages/')[1].split('/')[0].replace('.jsx', '').replace('.js', '');
-            if (pageName && pageName !== 'index') {
-              return `page-${pageName}`;
-            }
-          }
-
-          // Split components by feature
-          if (id.includes('/components/')) {
-            if (id.includes('/components/admin')) {
-              return 'components-admin';
-            }
-            if (id.includes('/components/student')) {
-              return 'components-student';
-            }
-            if (id.includes('/components/customer')) {
-              return 'components-customer';
-            }
-          }
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
         },
         // Optimize chunk file names
         chunkFileNames: 'assets/js/[name]-[hash].js',
