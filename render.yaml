@@ -9,6 +9,8 @@ services:
       - key: NODE_ENV
         value: production
       - key: SERVE_FRONTEND
-        value: true
-      - key: FRONTEND_PATH
-        value: ../frontend/dist
+        value: false
+      - key: BACKEND_URL
+        sync: false
+      - key: CLIENT_URL
+        sync: false

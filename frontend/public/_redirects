@@ -1,6 +1,1 @@
-# Netlify SPA redirects - handle all routes
-# This file ensures all routes (including /register, /login, etc.) serve index.html
-# Format: from_path    to_path    status_code
-# Using 200! forces the redirect even if a file exists at that path
-/*    /index.html   200!
-
+/* /index.html 200
