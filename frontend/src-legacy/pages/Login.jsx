@@ -115,6 +115,13 @@ export default function Login() {
         navigate('/');
       }
     } else {
+      if (result.requiresVerification) {
+        toast.error(result.error);
+        navigate('/verify-otp', { 
+          state: { email: result.email || formData.email } 
+        });
+        return;
+      }
       toast.error(result.error);
       setErrors({
         email: result.error.includes('email') ? result.error : '',

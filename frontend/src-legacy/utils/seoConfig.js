@@ -23,24 +23,24 @@ export function generatePageMetadata({
   canonical = null
 }) {
   // Ensure title is under 60 characters for SEO
-  const baseTitle = title || `${SITE_NAME} - IT Project Marketplace | Buy & Sell IT Projects Online`;
-  const fullTitle = baseTitle.length > 60 
+  const baseTitle = title || `${SITE_NAME} - IT Project Marketplace | Discover & Share IT Projects Online`;
+  const fullTitle = baseTitle.length > 60
     ? `${baseTitle.substring(0, 57)}... | ${SITE_NAME}`
     : `${baseTitle} | ${SITE_NAME}`;
-  
+
   // Ensure description is under 155 characters for SEO
-  let metaDescription = description || `${SITE_NAME} - India's leading IT project marketplace. Buy and sell IT projects with complete source code.`;
+  let metaDescription = description || `${SITE_NAME} - India's leading IT project marketplace. Discover and share IT projects with complete source code.`;
   if (metaDescription.length > 155) {
     metaDescription = metaDescription.substring(0, 152) + '...';
   }
-  
+
   // Combine keywords and tags
   const tagsStr = Array.isArray(tags) && tags.length > 0 ? tags.join(', ') : '';
-  const combinedKeywords = [keywords, tagsStr].filter(Boolean).join(', ') || 
-    'IT projects, React projects, Python projects, AI ML projects, buy IT projects, sell IT projects, source code, college projects';
-  
+  const combinedKeywords = [keywords, tagsStr].filter(Boolean).join(', ') ||
+    'IT projects, React projects, Python projects, AI ML projects, access IT projects, share IT projects, source code, college projects';
+
   const canonicalUrl = canonical || url || BASE_URL;
-  
+
   return {
     title: fullTitle,
     description: metaDescription,
@@ -131,8 +131,8 @@ export function generateProductSchema(product, baseUrl = BASE_URL) {
       priceCurrency: 'INR',
       price: price,
       priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      availability: product.stock > 0 
-        ? 'https://schema.org/InStock' 
+      availability: product.stock > 0
+        ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/NewCondition',
       seller: {
@@ -173,8 +173,8 @@ export function generateProductSchema(product, baseUrl = BASE_URL) {
     } else {
       schema.keywords = [...(schema.keywords || []), ...product.tags];
     }
-    schema.keywords = Array.isArray(schema.keywords) 
-      ? schema.keywords.join(', ') 
+    schema.keywords = Array.isArray(schema.keywords)
+      ? schema.keywords.join(', ')
       : schema.keywords;
   }
 
@@ -350,7 +350,7 @@ export function generateWebSiteSchema(baseUrl = BASE_URL) {
     name: SITE_NAME,
     alternateName: `${SITE_NAME} IT Project Marketplace`,
     url: baseUrl,
-    description: 'IT Project Marketplace for students and customers. Buy and sell IT projects with complete source code.',
+    description: 'IT Project Marketplace for students and customers. Discover and share IT projects with complete source code.',
     potentialAction: {
       '@type': 'SearchAction',
       target: {

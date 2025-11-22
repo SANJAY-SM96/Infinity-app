@@ -4,6 +4,7 @@ import { FiMessageCircle, FiX, FiSend, FiMinimize2, FiZap, FiTarget, FiAlertCirc
 import { aiService } from '../api/aiService';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
+import ReactMarkdown from 'react-markdown';
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,7 @@ export default function AIChatbot() {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setShowQuickActions(false);
-    
+
     // Handle collection mode for structured inputs
     if (collectionMode === 'ideas') {
       handleProjectIdeasSubmission(userMessageContent);
@@ -69,7 +70,7 @@ export default function AIChatbot() {
 
       // Use chatbot endpoint
       const response = await aiService.chatbot(userMessageContent, conversationHistory);
-      
+
       const assistantMessage = {
         role: 'assistant',
         content: response.data?.response || response.data?.message || 'I understand your requirements. Let me help you find the best solution!'
@@ -80,12 +81,12 @@ export default function AIChatbot() {
       console.error('Chatbot error:', error);
       console.error('Error response:', error.response?.data);
       console.error('Error message:', error.message);
-      
+
       // Show more detailed error in development
       const errorDetails = error.response?.data?.error || error.response?.data?.message || error.message;
       const errorMessage = {
         role: 'assistant',
-        content: process.env.NODE_ENV === 'development' 
+        content: process.env.NODE_ENV === 'development'
           ? `I encountered an error: ${errorDetails}. Please check the backend console for more details.`
           : 'I apologize, but I encountered an error. Please try again or contact our support team for assistance.'
       };
@@ -109,14 +110,14 @@ export default function AIChatbot() {
 
   const handleProjectIdeasSubmission = async (interests) => {
     if (!interests || interests.trim() === '') return;
-    
+
     setLoading(true);
     setCollectionMode(null);
-    
+
     try {
       const response = await aiService.getProjectIdeas({ interests: interests.trim() });
       const ideas = response.data?.ideas || [];
-      
+
       let content = 'Here are some project ideas for you:\n\n';
       ideas.forEach((idea, index) => {
         content += `${index + 1}. **${idea.title}**\n`;
@@ -130,9 +131,9 @@ export default function AIChatbot() {
     } catch (error) {
       console.error('Project ideas error:', error);
       toast.error('Failed to get project ideas');
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'I apologize, but I couldn\'t generate project ideas at this time. Please try again later.' 
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'I apologize, but I couldn\'t generate project ideas at this time. Please try again later.'
       }]);
     } finally {
       setLoading(false);
@@ -152,9 +153,9 @@ export default function AIChatbot() {
 
   const handleRecommendProjectsSubmission = async (userInput) => {
     setLoading(true);
-    
+
     const currentData = { ...collectionData };
-    
+
     if (currentData.step === 'experience') {
       currentData.experienceLevel = userInput.trim() || 'Intermediate';
       currentData.step = 'interests';
@@ -187,7 +188,7 @@ export default function AIChatbot() {
       return;
     } else if (currentData.step === 'goals') {
       currentData.goals = userInput.trim();
-      
+
       // Now process all collected data
       try {
         const response = await aiService.recommendProjects({
@@ -196,10 +197,10 @@ export default function AIChatbot() {
           skills: (currentData.skills || '').split(',').map(s => s.trim()).filter(s => s),
           goals: currentData.goals || ''
         });
-        
+
         const recommendations = response.data?.recommendations || [];
         let content = 'Here are my personalized project recommendations for you:\n\n';
-        
+
         recommendations.forEach((rec, index) => {
           content += `${index + 1}. **${rec.projectTitle}** (${rec.priority} priority)\n`;
           content += `   Why it fits: ${rec.fitReason}\n`;
@@ -216,9 +217,9 @@ export default function AIChatbot() {
       } catch (error) {
         console.error('Recommendations error:', error);
         toast.error('Failed to get project recommendations');
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'I apologize, but I couldn\'t generate recommendations at this time. Please try again later.' 
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: 'I apologize, but I couldn\'t generate recommendations at this time. Please try again later.'
         }]);
       } finally {
         setCollectionMode(null);
@@ -241,9 +242,9 @@ export default function AIChatbot() {
 
   const handleExplainFunctionalitySubmission = async (userInput) => {
     setLoading(true);
-    
+
     const currentData = { ...collectionData };
-    
+
     if (currentData.step === 'title') {
       if (!userInput.trim()) {
         setLoading(false);
@@ -274,7 +275,7 @@ export default function AIChatbot() {
       return;
     } else if (currentData.step === 'features') {
       currentData.features = userInput.trim().toLowerCase() === 'none' ? '' : userInput.trim();
-      
+
       // Now process all collected data
       try {
         const response = await aiService.explainFunctionality({
@@ -282,11 +283,11 @@ export default function AIChatbot() {
           projectDescription: currentData.projectDescription,
           features: currentData.features ? currentData.features.split(',').map(f => f.trim()).filter(f => f) : []
         });
-        
+
         const explanation = response.data?.explanation || {};
         let content = `**Functionality Explanation for ${currentData.projectTitle}**\n\n`;
         content += `**Core Functionality:**\n${explanation.coreFunctionality || 'Not available'}\n\n`;
-        
+
         if (explanation.featureExplanations?.length > 0) {
           content += `**Feature Breakdown:**\n`;
           explanation.featureExplanations.forEach((feat, index) => {
@@ -307,9 +308,9 @@ export default function AIChatbot() {
       } catch (error) {
         console.error('Functionality explanation error:', error);
         toast.error('Failed to explain functionality');
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: 'I apologize, but I couldn\'t explain the functionality at this time. Please try again later.' 
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: 'I apologize, but I couldn\'t explain the functionality at this time. Please try again later.'
         }]);
       } finally {
         setCollectionMode(null);
@@ -319,14 +320,14 @@ export default function AIChatbot() {
     }
   };
 
-  const bgClass = isDark 
-    ? 'bg-gray-900/95 backdrop-blur-xl border-gray-700' 
+  const bgClass = isDark
+    ? 'bg-gray-900/95 backdrop-blur-xl border-gray-700'
     : 'bg-white/95 backdrop-blur-xl border-gray-200 shadow-2xl';
   const textClass = isDark ? 'text-white' : 'text-gray-900';
-  const inputBg = isDark 
-    ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400' 
+  const inputBg = isDark
+    ? 'bg-gray-800/50 border-gray-600 text-white placeholder-gray-400'
     : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500';
-  
+
   // Bot Avatar Component
   const BotAvatar = () => (
     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg flex-shrink-0">
@@ -355,7 +356,7 @@ export default function AIChatbot() {
           whileHover={{ scale: 1.1, x: 5 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:left-6 z-50 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 transition-all flex items-center justify-center group touch-manipulation"
+          className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-50 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white rounded-full shadow-2xl hover:shadow-blue-500/50 transition-all flex items-center justify-center group touch-manipulation"
           aria-label="Open AI Assistant"
         >
           <motion.div
@@ -382,11 +383,10 @@ export default function AIChatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`fixed inset-0 sm:inset-auto sm:bottom-6 sm:left-6 sm:right-auto z-50 ${bgClass} border sm:rounded-3xl shadow-2xl flex flex-col ${
-              isMinimized 
-                ? 'sm:w-80 h-16' 
+            className={`fixed inset-0 sm:inset-auto sm:bottom-6 sm:left-6 sm:right-auto z-50 ${bgClass} border sm:rounded-3xl shadow-2xl flex flex-col ${isMinimized
+                ? 'sm:w-80 h-16'
                 : 'w-full h-full sm:w-[420px] sm:h-[700px] sm:max-h-[85vh] sm:rounded-3xl'
-            } transition-all duration-300`}
+              } transition-all duration-300`}
           >
             {/* Header */}
             <div className={`flex items-center justify-between p-4 sm:p-5 border-b ${isDark ? 'border-gray-700/50' : 'border-gray-200/50'} bg-gradient-to-r ${isDark ? 'from-gray-800/50 to-gray-800/30' : 'from-blue-50/50 to-purple-50/50'} flex-shrink-0`}>
@@ -482,17 +482,27 @@ export default function AIChatbot() {
                       )}
                       <div className={`flex flex-col ${message.role === 'user' ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[75%] min-w-0`}>
                         <div
-                          className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg break-words ${
-                            message.role === 'user'
+                          className={`rounded-2xl px-3 py-2 sm:px-4 sm:py-3 shadow-lg break-words ${message.role === 'user'
                               ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-tr-none'
                               : isDark
-                              ? 'bg-gray-800/80 text-white border border-gray-700/50 rounded-tl-none'
-                              : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border border-gray-200/50 rounded-tl-none'
-                          }`}
+                                ? 'bg-gray-800/80 text-white border border-gray-700/50 rounded-tl-none'
+                                : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border border-gray-200/50 rounded-tl-none'
+                            }`}
                         >
-                          <p className={`text-sm sm:text-base leading-relaxed whitespace-pre-wrap break-words ${message.role === 'user' ? 'text-white' : ''}`}>
-                            {message.content}
-                          </p>
+                          <div className={`text-sm sm:text-base leading-relaxed break-words ${message.role === 'user' ? 'text-white' : ''}`}>
+                            <ReactMarkdown
+                              components={{
+                                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="list-disc ml-4 mb-2" {...props} />,
+                                ol: ({ node, ...props }) => <ol className="list-decimal ml-4 mb-2" {...props} />,
+                                li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                                strong: ({ node, ...props }) => <strong className="font-bold" {...props} />,
+                                a: ({ node, ...props }) => <a className="underline hover:text-blue-300" target="_blank" rel="noopener noreferrer" {...props} />,
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          </div>
                         </div>
                         <span className={`text-[10px] sm:text-xs mt-1 px-2 ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
                           {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -514,11 +524,10 @@ export default function AIChatbot() {
                       <div className="flex-shrink-0 mt-1">
                         <BotAvatar />
                       </div>
-                      <div className={`rounded-2xl rounded-tl-none px-3 py-2 sm:px-4 sm:py-3 shadow-lg ${
-                        isDark 
-                          ? 'bg-gray-800/80 text-white border border-gray-700/50' 
+                      <div className={`rounded-2xl rounded-tl-none px-3 py-2 sm:px-4 sm:py-3 shadow-lg ${isDark
+                          ? 'bg-gray-800/80 text-white border border-gray-700/50'
                           : 'bg-gradient-to-r from-gray-100 to-gray-50 text-gray-900 border border-gray-200/50'
-                      }`}>
+                        }`}>
                         <div className="flex gap-1.5">
                           <motion.div
                             animate={{ y: [0, -6, 0], scale: [1, 1.2, 1] }}
@@ -551,23 +560,23 @@ export default function AIChatbot() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={
-                          collectionMode === 'ideas' 
+                          collectionMode === 'ideas'
                             ? 'Tell me about your interests...'
                             : collectionMode === 'recommend' && collectionData.step === 'experience'
-                            ? 'Beginner, Intermediate, or Advanced?'
-                            : collectionMode === 'recommend' && collectionData.step === 'interests'
-                            ? 'What topics interest you?'
-                            : collectionMode === 'recommend' && collectionData.step === 'skills'
-                            ? 'List your skills...'
-                            : collectionMode === 'recommend' && collectionData.step === 'goals'
-                            ? 'What do you want to achieve?'
-                            : collectionMode === 'explain' && collectionData.step === 'title'
-                            ? 'Enter the project title...'
-                            : collectionMode === 'explain' && collectionData.step === 'description'
-                            ? 'Describe the project...'
-                            : collectionMode === 'explain' && collectionData.step === 'features'
-                            ? 'List key features...'
-                            : 'Type your message...'
+                              ? 'Beginner, Intermediate, or Advanced?'
+                              : collectionMode === 'recommend' && collectionData.step === 'interests'
+                                ? 'What topics interest you?'
+                                : collectionMode === 'recommend' && collectionData.step === 'skills'
+                                  ? 'List your skills...'
+                                  : collectionMode === 'recommend' && collectionData.step === 'goals'
+                                    ? 'What do you want to achieve?'
+                                    : collectionMode === 'explain' && collectionData.step === 'title'
+                                      ? 'Enter the project title...'
+                                      : collectionMode === 'explain' && collectionData.step === 'description'
+                                        ? 'Describe the project...'
+                                        : collectionMode === 'explain' && collectionData.step === 'features'
+                                          ? 'List key features...'
+                                          : 'Type your message...'
                         }
                         className={`w-full ${inputBg} px-3 py-2.5 sm:px-4 sm:py-3 pr-10 sm:pr-12 rounded-xl sm:rounded-2xl border text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none touch-manipulation`}
                         disabled={loading}
@@ -597,9 +606,8 @@ export default function AIChatbot() {
                       disabled={loading || !input.trim()}
                       whileHover={{ scale: input.trim() ? 1.05 : 1 }}
                       whileTap={{ scale: input.trim() ? 0.95 : 1 }}
-                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center disabled:hover:scale-100 touch-manipulation flex-shrink-0 ${
-                        input.trim() ? 'animate-pulse' : ''
-                      }`}
+                      className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center disabled:hover:scale-100 touch-manipulation flex-shrink-0 ${input.trim() ? 'animate-pulse' : ''
+                        }`}
                       aria-label="Send message"
                     >
                       <FiSend size={18} className="sm:w-5 sm:h-5" />

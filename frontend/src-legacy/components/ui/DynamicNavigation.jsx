@@ -41,9 +41,9 @@ export const DynamicNavigation = ({
 
     const navRect = navRef.current.getBoundingClientRect();
     const linkInner = linkElement.querySelector('a');
-    
+
     if (!linkInner) return;
-    
+
     const innerRect = linkInner.getBoundingClientRect();
 
     if (variant === 'vertical') {
@@ -178,14 +178,27 @@ export const DynamicNavigation = ({
     <nav
       ref={navRef}
       className={cn(
-        'relative rounded-full backdrop-blur-md border shadow-lg transition-all duration-300',
-        defaultBg,
+        'relative flex items-center justify-center rounded-full border transition-all duration-300 mx-auto max-w-fit w-auto px-2',
+        // Glass effect classes replacing defaultBg
+        'bg-white/70 dark:bg-slate-900/40',
+        'backdrop-blur-xl',
+        'border-slate-200/60 dark:border-slate-700/60',
+        'shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)]',
         variant === 'vertical' && 'rounded-2xl p-2',
         className
       )}
       style={{
-        backgroundColor: backgroundColor,
+        // background: removed to use classes
+        // backdropFilter: handled by class
+        // WebkitBackdropFilter: handled by class
         color: textColor,
+        // Keep the 3D transform/shadows that classes might not cover fully, or simplify
+        boxShadow: `
+            0 4px 6px -1px rgba(0, 0, 0, 0.05),
+            0 2px 4px -1px rgba(0, 0, 0, 0.03),
+            0 12px 24px -4px rgba(0, 0, 0, 0.08)
+          `,
+        transform: 'translateY(0)',
       }}
     >
       {/* Background highlight for hover/active - disabled */}
@@ -221,7 +234,7 @@ export const DynamicNavigation = ({
                 className={cn(
                   'flex gap-2 items-center justify-center rounded-full font-medium transition-colors duration-200 ease-out relative overflow-hidden',
                   defaultText,
-                  variant === 'horizontal' && 'h-10 px-4 text-xs md:text-sm min-h-[40px]',
+                  variant === 'horizontal' && 'h-9 px-3 text-xs md:text-sm min-h-[36px]',
                   variant === 'vertical' && 'h-12 px-4 text-sm w-full',
                   isActive && 'font-semibold',
                   // Hover state - subtle color change without blue/purple

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiShoppingCart, 
-  FiUser, 
-  FiLogOut, 
-  FiMenu, 
-  FiX, 
-  FiSun, 
+import {
+  FiShoppingCart,
+  FiUser,
+  FiLogOut,
+  FiMenu,
+  FiX,
+  FiSun,
   FiMoon,
   FiShoppingBag,
   FiFileText,
@@ -33,13 +33,13 @@ export default function Navbar({ isHomePage = false }) {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   // Dynamic navigation items based on user authentication and role
-  const baseNavItems = useMemo(() => 
+  const baseNavItems = useMemo(() =>
     getNavigationItems(user, isAuthenticated),
     [user, isAuthenticated]
   );
 
   // Convert to DynamicNavigation format
-  const navItems = useMemo(() => 
+  const navItems = useMemo(() =>
     baseNavItems.map(item => ({
       id: item.id,
       label: item.label,
@@ -49,7 +49,7 @@ export default function Navbar({ isHomePage = false }) {
     [baseNavItems]
   );
 
-  const mobileNavItems = useMemo(() => 
+  const mobileNavItems = useMemo(() =>
     getMobileNavigationItems(user, isAuthenticated).map(item => ({
       id: item.id,
       label: item.label,
@@ -68,22 +68,22 @@ export default function Navbar({ isHomePage = false }) {
     if (!isAuthenticated || !user) {
       return '/';
     }
-    
+
     // Admin users go to admin dashboard
     if (user.role === 'admin') {
       return '/admin';
     }
-    
+
     // Students go to student home
     if (user.userType === 'student') {
       return '/home/student';
     }
-    
+
     // Customers go to customer home
     if (user.userType === 'customer') {
       return '/home/customer';
     }
-    
+
     // Default to main home
     return '/';
   };
@@ -92,7 +92,7 @@ export default function Navbar({ isHomePage = false }) {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       setScrolled(currentScrollY > 20);
-      
+
       // Hide navbar when scrolling down, show when scrolling up
       if (currentScrollY < 100) {
         // Always show at the top
@@ -104,10 +104,10 @@ export default function Navbar({ isHomePage = false }) {
         // Scrolling up - show
         setIsVisible(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
-    
+
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
@@ -117,8 +117,8 @@ export default function Navbar({ isHomePage = false }) {
   // Navbar background colors based on scroll and theme
   const navBgColor = isHomePage
     ? (scrolled
-        ? (isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)')
-        : (isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)'))
+      ? (isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)')
+      : (isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)'))
     : (isDark ? 'rgba(30, 41, 59, 0.95)' : 'rgba(255, 255, 255, 0.95)');
 
   const navTextColor = isDark ? 'rgba(241, 245, 249, 0.9)' : 'rgba(30, 41, 59, 0.9)';
@@ -128,7 +128,7 @@ export default function Navbar({ isHomePage = false }) {
     <>
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
-        animate={{ 
+        animate={{
           y: isVisible ? 0 : -100,
           opacity: isVisible ? 1 : 0
         }}
@@ -138,29 +138,40 @@ export default function Navbar({ isHomePage = false }) {
         <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-2.5 sm:py-3 lg:py-4 flex justify-center">
           <motion.div
             className={cn(
-              'relative flex items-center justify-between rounded-xl sm:rounded-2xl border backdrop-blur-xl px-2 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 transition-all duration-300 min-h-[52px] sm:min-h-[56px] w-full lg:w-[85%] overflow-hidden',
+              'relative flex items-center justify-between rounded-xl sm:rounded-2xl border px-2 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 transition-all duration-300 min-h-[52px] sm:min-h-[56px] w-full lg:w-[95%]',
               isHomePage && !scrolled
                 ? 'border-transparent shadow-none'
                 : isHomePage && scrolled
-                ? isDark
-                  ? 'border-slate-700/50 shadow-2xl'
-                  : 'border-slate-200/50 shadow-2xl'
-                : isDark
-                ? 'border-slate-700/50 shadow-xl'
-                : 'border-slate-200/50 shadow-xl'
+                  ? isDark
+                    ? 'border-slate-700/50 shadow-2xl'
+                    : 'border-slate-200/50 shadow-2xl'
+                  : isDark
+                    ? 'border-slate-700/50 shadow-xl'
+                    : 'border-slate-200/50 shadow-xl'
             )}
             style={{
+              background: `
+                linear-gradient(135deg,
+                  rgba(255,255,255,0.45) 0%,
+                  rgba(255,255,255,0.30) 25%,
+                  rgba(255,255,255,0.20) 50%,
+                  rgba(255,255,255,0.30) 75%,
+                  rgba(255,255,255,0.45) 100%
+                )
+              `,
               backgroundColor: navBgColor,
+              backdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
+              WebkitBackdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
             }}
           >
             {/* Logo */}
-            <Link 
-              to={getHomePath()} 
+            <Link
+              to={getHomePath()}
               className="relative z-10 flex items-center gap-1.5 sm:gap-2 min-w-0 flex-shrink group max-w-[60%] sm:max-w-none"
             >
-              <motion.img 
-                src="/player.svg" 
-                alt="Infinity Logo - IT Project Marketplace" 
+              <motion.img
+                src="/player.svg"
+                alt="Infinity Logo - IT Project Marketplace"
                 className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
                 width="44"
                 height="44"
@@ -179,7 +190,7 @@ export default function Navbar({ isHomePage = false }) {
             </Link>
 
             {/* Desktop Menu - Dynamic Navigation */}
-            <div className="relative z-10 hidden lg:flex items-center gap-4 flex-1 justify-center mx-8 h-full">
+            <div className="relative z-10 hidden lg:flex items-center gap-4 flex-1 justify-center mx-8 h-full overflow-x-auto scrollbar-hide">
               {navItems.length > 0 && (
                 <DynamicNavigation
                   links={navItems}
@@ -188,7 +199,7 @@ export default function Navbar({ isHomePage = false }) {
                   highlightColor={navHighlightColor}
                   glowIntensity={isDark ? 8 : 5}
                   showLabelsOnMobile={false}
-                  className="max-w-2xl"
+                  className="max-w-fit flex-shrink-0"
                   onLinkClick={(id) => {
                     setIsMenuOpen(false);
                   }}
@@ -206,8 +217,8 @@ export default function Navbar({ isHomePage = false }) {
                 whileTap={{ scale: 0.9 }}
                 className={cn(
                   'p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 flex-shrink-0 relative overflow-hidden flex items-center justify-center',
-                  isDark 
-                    ? 'text-amber-400 hover:bg-amber-400/10 hover:text-amber-300' 
+                  isDark
+                    ? 'text-amber-400 hover:bg-amber-400/10 hover:text-amber-300'
                     : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                 )}
                 aria-label={`Switch to ${isDark ? 'light' : 'dark'} theme`}
@@ -216,22 +227,22 @@ export default function Navbar({ isHomePage = false }) {
               >
                 {isDark ? <FiSun className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" /> : <FiMoon className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />}
               </motion.button>
-              
+
               {/* Cart */}
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex items-center justify-center flex-shrink-0">
-                <Link 
-                  to="/cart" 
+                <Link
+                  to="/cart"
                   className={cn(
                     'group relative p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 flex-shrink-0 flex items-center justify-center',
-                    isDark 
-                      ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10' 
+                    isDark
+                      ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10'
                       : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                   )}
                   aria-label={`Shopping cart${cartCount > 0 ? ` with ${cartCount} item${cartCount > 1 ? 's' : ''}` : ''}`}
                 >
                   <FiShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                   {cartCount > 0 && (
-                    <motion.span 
+                    <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 text-[9px] sm:text-[10px] font-extrabold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center bg-gradient-to-r from-primary via-primary-light to-accent text-white shadow-lg border-2 border-white dark:border-slate-900"
@@ -246,7 +257,7 @@ export default function Navbar({ isHomePage = false }) {
               {/* Auth Buttons - Desktop */}
               {isAuthenticated ? (
                 <div className="hidden lg:flex items-center gap-2 h-full">
-                  <motion.button 
+                  <motion.button
                     onClick={() => {
                       if (user?.role === 'admin') {
                         navigate('/admin');
@@ -262,22 +273,22 @@ export default function Navbar({ isHomePage = false }) {
                     whileTap={{ scale: 0.95 }}
                     className={cn(
                       'p-2.5 rounded-xl transition-all duration-200 flex items-center justify-center',
-                      isDark 
-                        ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10' 
+                      isDark
+                        ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10'
                         : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                     )}
                     aria-label="Dashboard"
                   >
                     <FiUser className="w-5 h-5" />
                   </motion.button>
-                  <motion.button 
+                  <motion.button
                     onClick={handleLogout}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className={cn(
                       'p-2.5 rounded-xl transition-all duration-200 flex items-center justify-center',
-                      isDark 
-                        ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10' 
+                      isDark
+                        ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
                         : 'text-red-600 hover:text-red-700 hover:bg-red-50'
                     )}
                     aria-label="Logout"
@@ -312,14 +323,14 @@ export default function Navbar({ isHomePage = false }) {
               )}
 
               {/* Mobile Menu Toggle */}
-              <motion.button 
+              <motion.button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className={cn(
                   'lg:hidden p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 flex-shrink-0 flex items-center justify-center',
-                  isDark 
-                    ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10' 
+                  isDark
+                    ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10'
                     : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                 )}
                 aria-label="Toggle menu"
@@ -330,7 +341,7 @@ export default function Navbar({ isHomePage = false }) {
           </motion.div>
         </div>
       </motion.nav>
-      
+
       {/* Spacer to prevent content overlap - Only show on non-home pages */}
       {!isHomePage && <div className="h-14 sm:h-16 md:h-20" />}
 
@@ -346,17 +357,17 @@ export default function Navbar({ isHomePage = false }) {
               onClick={() => setIsMenuOpen(false)}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[99] lg:hidden"
             />
-            
+
             {/* Mobile Menu Panel */}
-            <motion.div 
-              initial={{ x: '-100%' }} 
+            <motion.div
+              initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
               className={cn(
                 'fixed top-0 left-0 h-full w-72 sm:w-80 max-w-[90vw] sm:max-w-[85vw] z-[100] border-r backdrop-blur-2xl shadow-2xl lg:hidden overflow-hidden',
-                isDark 
-                  ? 'bg-slate-900/98 border-slate-700' 
+                isDark
+                  ? 'bg-slate-900/98 border-slate-700'
                   : 'bg-white/98 border-slate-200'
               )}
             >
@@ -366,14 +377,14 @@ export default function Navbar({ isHomePage = false }) {
                   'flex items-center justify-between p-4 sm:p-5 border-b flex-shrink-0',
                   isDark ? 'border-slate-700' : 'border-slate-200'
                 )}>
-                  <Link 
-                    to={getHomePath()} 
+                  <Link
+                    to={getHomePath()}
                     onClick={() => setIsMenuOpen(false)}
                     className="flex items-center gap-2 sm:gap-3 group min-w-0 flex-1"
                   >
-                    <motion.img 
-                      src="/player.svg" 
-                      alt="Infinity Logo" 
+                    <motion.img
+                      src="/player.svg"
+                      alt="Infinity Logo"
                       className="w-9 h-9 sm:w-10 sm:h-10 flex-shrink-0 group-hover:scale-110 transition-transform"
                       whileHover={{ rotate: 5 }}
                     />
@@ -387,8 +398,8 @@ export default function Navbar({ isHomePage = false }) {
                     whileTap={{ scale: 0.9 }}
                     className={cn(
                       'p-2 sm:p-2.5 rounded-lg sm:rounded-xl transition-all duration-200 flex-shrink-0 ml-2',
-                      isDark 
-                        ? 'text-slate-100/80 hover:text-slate-100 hover:bg-slate-100/10' 
+                      isDark
+                        ? 'text-slate-100/80 hover:text-slate-100 hover:bg-slate-100/10'
                         : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                     )}
                     aria-label="Close menu"
@@ -421,7 +432,7 @@ export default function Navbar({ isHomePage = false }) {
                 )}>
                   {isAuthenticated ? (
                     <>
-                      <motion.button 
+                      <motion.button
                         onClick={() => {
                           setIsMenuOpen(false);
                           if (user?.role === 'admin') {
@@ -438,15 +449,15 @@ export default function Navbar({ isHomePage = false }) {
                         whileTap={{ scale: 0.98 }}
                         className={cn(
                           'w-full flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-3.5 px-3 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-sm transition-all duration-200 min-h-[44px]',
-                          isDark 
-                            ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10' 
+                          isDark
+                            ? 'text-slate-100/90 hover:text-slate-100 hover:bg-slate-100/10'
                             : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
                         )}
                       >
                         <FiUser className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                         <span>Dashboard</span>
                       </motion.button>
-                      <motion.button 
+                      <motion.button
                         onClick={() => {
                           setIsMenuOpen(false);
                           handleLogout();
@@ -455,8 +466,8 @@ export default function Navbar({ isHomePage = false }) {
                         whileTap={{ scale: 0.98 }}
                         className={cn(
                           'w-full flex items-center justify-center gap-2 sm:gap-3 py-3 sm:py-3.5 px-3 sm:px-4 rounded-lg sm:rounded-xl font-semibold text-sm transition-all duration-200 min-h-[44px]',
-                          isDark 
-                            ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10' 
+                          isDark
+                            ? 'text-red-400 hover:text-red-300 hover:bg-red-500/10'
                             : 'text-red-600 hover:text-red-700 hover:bg-red-50'
                         )}
                       >

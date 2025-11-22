@@ -83,10 +83,7 @@ export default function Register() {
         if (!value) error = ERROR_MESSAGES.REQUIRED_FIELD;
         else if (value !== formData.password) error = ERROR_MESSAGES.PASSWORD_MISMATCH;
         break;
-      case 'confirmPassword':
-        if (!value) error = ERROR_MESSAGES.REQUIRED_FIELD;
-        else if (value !== formData.password) error = ERROR_MESSAGES.PASSWORD_MISMATCH;
-        break;
+
       default: break;
     }
     setErrors(prev => ({ ...prev, [name]: error }));
@@ -166,7 +163,7 @@ export default function Register() {
   ];
 
   const studentFeatures = [
-    { icon: FiTrendingUp, text: 'Sell Your Projects', color: 'text-green-500' },
+    { icon: FiTrendingUp, text: 'Publish Your Projects', color: 'text-green-500' },
     { icon: FaGraduationCap, text: 'Monetize College Projects', color: 'text-blue-500' },
     { icon: FaRocket, text: 'Earn Passive Income', color: 'text-purple-500' },
     { icon: FaUsers, text: 'Reach 10,000+ Buyers', color: 'text-pink-500' },
@@ -190,7 +187,7 @@ export default function Register() {
     <AuthLayout>
       <SEO
         title="Register"
-        description="Create an account on Infinity to buy or sell IT projects. Join our community of developers and students."
+        description="Create an account on Infinity to browse or publish IT projects. Join our community of developers and students."
       />
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
@@ -211,7 +208,7 @@ export default function Register() {
                 {' '}Today
               </h1>
               <p className={`text-lg ${isDark ? 'text-slate-300' : 'text-slate-600'} leading-relaxed`}>
-                India's #1 IT project marketplace. Join 10,000+ students and developers buying and selling verified IT projects with complete source code, documentation, and database.
+                India's #1 IT project marketplace. Join 10,000+ students and developers browsing and publishing verified IT projects with complete source code, documentation, and database.
               </p>
             </div>
 

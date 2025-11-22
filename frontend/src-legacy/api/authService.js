@@ -3,10 +3,7 @@ import api from './apiClient';
 const authService = {
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
+    // Do not set token here to enforce OTP verification
     return response;
   },
 

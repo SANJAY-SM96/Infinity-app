@@ -59,8 +59,8 @@ export default defineConfig({
     emptyOutDir: true,
     minify: 'esbuild', // Use esbuild (built-in, faster than terser, no extra dependency needed)
     cssCodeSplit: true, // Split CSS for better caching
-    // Increase chunk size warning limit
-    chunkSizeWarningLimit: 1000,
+    // Increase chunk size warning limit (in KB)
+    chunkSizeWarningLimit: 1500,
     // Production optimizations
     reportCompressedSize: true, // Report compressed size
     target: 'es2015', // Target modern browsers for smaller bundles
@@ -71,26 +71,82 @@ export default defineConfig({
         manualChunks: (id) => {
           // Separate vendor chunks for better caching
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            // React ecosystem (largest, most stable)
+            if (id.includes('react') || id.includes('react-dom')) {
               return 'react-vendor';
             }
-            if (id.includes('framer-motion') || id.includes('react-icons')) {
-              return 'ui-vendor';
+            if (id.includes('react-router') || id.includes('react-router-dom')) {
+              return 'router-vendor';
             }
-            if (id.includes('axios') || id.includes('react-hot-toast')) {
-              return 'utils-vendor';
+
+            // UI/Animation libraries
+            if (id.includes('framer-motion')) {
+              return 'animation-vendor';
             }
-            if (id.includes('chart') || id.includes('recharts')) {
+            if (id.includes('react-icons')) {
+              return 'icons-vendor';
+            }
+
+            // Utility libraries
+            if (id.includes('axios')) {
+              return 'http-vendor';
+            }
+            if (id.includes('react-hot-toast') || id.includes('react-toastify')) {
+              return 'toast-vendor';
+            }
+
+            // Charts and visualization
+            if (id.includes('chart') || id.includes('recharts') || id.includes('d3')) {
               return 'charts-vendor';
             }
-            // Other vendor libraries
+
+            // Form libraries
+            if (id.includes('formik') || id.includes('yup') || id.includes('react-hook-form')) {
+              return 'forms-vendor';
+            }
+
+            // Date/Time libraries
+            if (id.includes('date-fns') || id.includes('moment') || id.includes('dayjs')) {
+              return 'datetime-vendor';
+            }
+
+            // State management
+            if (id.includes('redux') || id.includes('zustand') || id.includes('jotai')) {
+              return 'state-vendor';
+            }
+
+            // Helmet/SEO
+            if (id.includes('helmet')) {
+              return 'seo-vendor';
+            }
+
+            // Admin/Dashboard specific libraries
+            if (id.includes('/pages/admin') || id.includes('AdminDashboard')) {
+              return 'page-admin';
+            }
+
+            // Other vendor libraries (catch-all for remaining dependencies)
             return 'vendor';
           }
+
           // Split pages into separate chunks for lazy loading
           if (id.includes('/pages/')) {
-            const pageName = id.split('/pages/')[1].split('/')[0];
-            if (pageName !== 'index') {
+            const pageName = id.split('/pages/')[1].split('/')[0].replace('.jsx', '').replace('.js', '');
+            if (pageName && pageName !== 'index') {
               return `page-${pageName}`;
+            }
+          }
+
+          // Split components by feature
+          if (id.includes('/components/')) {
+            if (id.includes('/components/admin')) {
+              return 'components-admin';
+            }
+            if (id.includes('/components/student')) {
+              return 'components-student';
+            }
+            if (id.includes('/components/customer')) {
+              return 'components-customer';
             }
           }
         },

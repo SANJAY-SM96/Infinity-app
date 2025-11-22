@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { productService } from '../api/productService';
 import ProductCard from '../components/ProductCard';
-import { 
+import {
   FiShoppingBag,
   FiTrendingUp,
   FiStar,
@@ -16,6 +16,7 @@ import {
   FiFilter
 } from 'react-icons/fi';
 import Loader from '../components/Loader';
+import CustomerSEO from '../components/customer/CustomerSEO';
 
 export default function CustomerHome() {
   const { user } = useAuth();
@@ -44,13 +45,13 @@ export default function CustomerHome() {
     }
   };
 
-  const bgClass = isDark 
-    ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
+  const bgClass = isDark
+    ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
     : 'bg-gradient-to-br from-slate-50 via-indigo-50/30 to-primary-50/20';
   const textClass = isDark ? 'text-white' : 'text-gray-900';
   const textMuted = isDark ? 'text-gray-400' : 'text-gray-600';
-  const cardBg = isDark 
-    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' 
+  const cardBg = isDark
+    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700'
     : 'bg-white/80 backdrop-blur-xl border-gray-200';
 
   const features = [
@@ -83,6 +84,7 @@ export default function CustomerHome() {
 
   return (
     <div className={`min-h-screen ${bgClass} ${textClass} pt-24`}>
+      <CustomerSEO />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">

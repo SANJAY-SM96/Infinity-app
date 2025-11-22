@@ -7,8 +7,8 @@ import Loader from '../components/Loader';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
-import { 
-  FiTrendingUp, FiUsers, FiPackage, FiDollarSign, FiArrowRight, 
+import {
+  FiTrendingUp, FiUsers, FiPackage, FiDollarSign, FiArrowRight,
   FiShoppingBag, FiActivity, FiFileText, FiPlus, FiSettings, FiClock,
   FiRefreshCw, FiBarChart2, FiCalendar, FiTrendingDown
 } from 'react-icons/fi';
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     fetchData();
     const interval = setInterval(() => {
       fetchData();
-    }, 30000);
+    }, 300000); // 5 minutes
     return () => clearInterval(interval);
   }, [timeRange]);
 
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
         const requestsRes = await projectRequestService.getAll({ limit: 5, page: 1 });
         const requests = requestsRes.data.requests || requestsRes.data.projectRequests || [];
         setRecentRequests(requests);
-        
+
         const allRequestsRes = await projectRequestService.getAll({ limit: 1000 });
         const allRequests = allRequestsRes.data.requests || allRequestsRes.data.projectRequests || [];
         setRequestStats({
@@ -175,14 +175,14 @@ export default function AdminDashboard() {
       </AdminLayout>
     );
   }
-  const cardBg = isDark 
-    ? 'bg-gray-800/60 backdrop-blur-xl border-gray-700/50' 
+  const cardBg = isDark
+    ? 'bg-gray-800/60 backdrop-blur-xl border-gray-700/50'
     : 'bg-white/80 backdrop-blur-xl border-gray-200/50';
   const chartGridColor = isDark ? '#374151' : '#e5e7eb';
   const chartTextColor = isDark ? '#9ca3af' : '#6b7280';
 
   // Calculate revenue growth
-  const revenueGrowth = chartData.length > 1 
+  const revenueGrowth = chartData.length > 1
     ? ((chartData[chartData.length - 1]?.sales || 0) - (chartData[0]?.sales || 0)) / (chartData[0]?.sales || 1) * 100
     : 0;
 
@@ -342,7 +342,7 @@ export default function AdminDashboard() {
                 <Link to={card.link} className="block h-full">
                   <div className={`relative h-full min-h-[160px] bg-gradient-to-br ${card.bgGradient} ${cardBg} border ${card.borderColor} rounded-xl p-6 transition-all duration-300 overflow-hidden shadow-xl hover:shadow-2xl flex flex-col`}>
                     <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-50 group-hover:opacity-75 transition-opacity duration-300`} />
-                    
+
                     <div className="relative z-10 flex flex-col flex-1">
                       <div className="flex items-start justify-between mb-6">
                         <div className={`p-3 rounded-xl border-2 ${card.borderColor} bg-gradient-to-br ${card.bgGradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
@@ -411,36 +411,36 @@ export default function AdminDashboard() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} />
-                    <XAxis 
-                      dataKey="_id" 
-                      stroke={chartTextColor} 
-                      fontSize={12} 
-                      tick={{ fill: chartTextColor }}
-                      tickLine={{ stroke: chartGridColor }}
-                    />
-                    <YAxis 
-                      stroke={chartTextColor} 
+                    <XAxis
+                      dataKey="_id"
+                      stroke={chartTextColor}
                       fontSize={12}
                       tick={{ fill: chartTextColor }}
                       tickLine={{ stroke: chartGridColor }}
                     />
-                    <Tooltip 
-                      contentStyle={{ 
+                    <YAxis
+                      stroke={chartTextColor}
+                      fontSize={12}
+                      tick={{ fill: chartTextColor }}
+                      tickLine={{ stroke: chartGridColor }}
+                    />
+                    <Tooltip
+                      contentStyle={{
                         backgroundColor: isDark ? '#1f2937' : '#ffffff',
                         border: `1px solid ${isDark ? '#3b82f6' : '#2563EB'}`,
                         borderRadius: '12px',
                         color: isDark ? '#fff' : '#000',
                         boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
-                      }} 
+                      }}
                       labelStyle={{ color: isDark ? '#9ca3af' : '#6b7280', fontWeight: 'bold' }}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="sales" 
-                      stroke="#2563EB" 
+                    <Area
+                      type="monotone"
+                      dataKey="sales"
+                      stroke="#2563EB"
                       strokeWidth={3}
                       fillOpacity={1}
-                      fill="url(#colorSales)" 
+                      fill="url(#colorSales)"
                       name="Revenue (₹)"
                       dot={{ fill: '#2563EB', r: 4 }}
                       activeDot={{ r: 6, fill: '#2563EB' }}
@@ -478,33 +478,33 @@ export default function AdminDashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={orderStats}>
                     <CartesianGrid strokeDasharray="3 3" stroke={chartGridColor} opacity={0.5} />
-                    <XAxis 
-                      dataKey="_id" 
-                      stroke={chartTextColor} 
+                    <XAxis
+                      dataKey="_id"
+                      stroke={chartTextColor}
                       fontSize={12}
                       tick={{ fill: chartTextColor }}
                       tickLine={{ stroke: chartGridColor }}
                     />
-                    <YAxis 
-                      stroke={chartTextColor} 
+                    <YAxis
+                      stroke={chartTextColor}
                       fontSize={12}
                       tick={{ fill: chartTextColor }}
                       tickLine={{ stroke: chartGridColor }}
                     />
-                    <Tooltip 
-                      contentStyle={{ 
+                    <Tooltip
+                      contentStyle={{
                         backgroundColor: isDark ? '#1f2937' : '#ffffff',
                         border: `1px solid ${isDark ? '#ec4899' : '#ff006e'}`,
                         borderRadius: '12px',
                         color: isDark ? '#fff' : '#000',
                         boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
-                      }} 
+                      }}
                       labelStyle={{ color: isDark ? '#9ca3af' : '#6b7280', fontWeight: 'bold' }}
                     />
-                    <Bar 
-                      dataKey="count" 
-                      fill="#ff006e" 
-                      name="Count" 
+                    <Bar
+                      dataKey="count"
+                      fill="#ff006e"
+                      name="Count"
                       radius={[12, 12, 0, 0]}
                       stroke="#ff006e"
                       strokeWidth={2}
@@ -556,14 +556,14 @@ export default function AdminDashboard() {
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ 
+                    <Tooltip
+                      contentStyle={{
                         backgroundColor: isDark ? '#1f2937' : '#ffffff',
                         border: `1px solid ${isDark ? '#2563EB' : '#2563EB'}`,
                         borderRadius: '12px',
                         color: isDark ? '#fff' : '#000',
                         boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
-                      }} 
+                      }}
                       labelStyle={{ color: isDark ? '#9ca3af' : '#6b7280', fontWeight: 'bold' }}
                     />
                   </PieChart>
@@ -609,12 +609,11 @@ export default function AdminDashboard() {
                       className={`flex items-center justify-between p-4 rounded-xl ${isDark ? 'bg-gray-800/50 hover:bg-gray-800' : 'bg-gray-50 hover:bg-gray-100'} border ${isDark ? 'border-gray-700' : 'border-gray-200'} transition-all cursor-pointer group`}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-bold text-sm shadow-lg flex-shrink-0 ${
-                          index === 0 ? 'from-yellow-400 to-orange-500' : 
-                          index === 1 ? 'from-gray-300 to-gray-500' : 
-                          index === 2 ? 'from-orange-400 to-orange-600' : 
-                          'from-blue-500/20 to-pink-500/20'
-                        }`}>
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center text-white font-bold text-sm shadow-lg flex-shrink-0 ${index === 0 ? 'from-yellow-400 to-orange-500' :
+                            index === 1 ? 'from-gray-300 to-gray-500' :
+                              index === 2 ? 'from-orange-400 to-orange-600' :
+                                'from-blue-500/20 to-pink-500/20'
+                          }`}>
                           {index + 1}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -667,8 +666,8 @@ export default function AdminDashboard() {
                   </span>
                 </div>
               )}
-              <Link 
-                to="/admin/project-requests" 
+              <Link
+                to="/admin/project-requests"
                 className="px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-primary to-secondary text-white text-sm sm:text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
               >
                 <FiSettings size={16} />
@@ -707,18 +706,16 @@ export default function AdminDashboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   onClick={() => navigate('/admin/project-requests')}
-                  className={`flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all ${
-                    isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
-                  } group`}
+                  className={`flex items-start justify-between p-4 rounded-xl cursor-pointer transition-all ${isDark ? 'bg-gray-800/50 hover:bg-gray-800 border border-gray-700' : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
+                    } group`}
                 >
                   <div className="flex-1 min-w-0">
                     <p className={`${textClass} font-semibold text-sm mb-2 truncate`}>{request.projectTitle}</p>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
-                        request.status === 'completed' || request.status === 'approved' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
-                        'bg-blue-500/20 text-blue-500 border border-blue-500/30'
-                      }`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
+                          request.status === 'completed' || request.status === 'approved' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
+                            'bg-blue-500/20 text-blue-500 border border-blue-500/30'
+                        }`}>
                         {request.status}
                       </span>
                       <span className={`${textMuted} text-xs`}>{request.domain}</span>
@@ -732,9 +729,9 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <div className="ml-4 flex-shrink-0">
-                    <FiArrowRight 
-                      className={`${isDark ? 'text-gray-500' : 'text-gray-400'} group-hover:text-primary group-hover:translate-x-1 transition-all`} 
-                      size={18} 
+                    <FiArrowRight
+                      className={`${isDark ? 'text-gray-500' : 'text-gray-400'} group-hover:text-primary group-hover:translate-x-1 transition-all`}
+                      size={18}
                     />
                   </div>
                 </motion.div>
@@ -808,12 +805,11 @@ export default function AdminDashboard() {
                         <span className="text-primary font-bold text-sm sm:text-base">₹{order.total?.toFixed(2) || '0.00'}</span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          order.orderStatus === 'Delivered' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
-                          order.orderStatus === 'Shipped' ? 'bg-blue-500/20 text-blue-500 border border-blue-500/30' :
-                          order.orderStatus === 'Processing' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
-                          'bg-red-500/20 text-red-500 border border-red-500/30'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${order.orderStatus === 'Delivered' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
+                            order.orderStatus === 'Shipped' ? 'bg-blue-500/20 text-blue-500 border border-blue-500/30' :
+                              order.orderStatus === 'Processing' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' :
+                                'bg-red-500/20 text-red-500 border border-red-500/30'
+                          }`}>
                           {order.orderStatus}
                         </span>
                       </td>
@@ -838,9 +834,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Project Request Form Modal */}
-      <ProjectRequestForm 
-        isOpen={showRequestForm} 
-        onClose={handleRequestFormClose} 
+      <ProjectRequestForm
+        isOpen={showRequestForm}
+        onClose={handleRequestFormClose}
       />
     </AdminLayout>
   );

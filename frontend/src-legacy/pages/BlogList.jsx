@@ -110,15 +110,15 @@ export default function BlogList() {
     const baseUrl = 'https://infinitywebtechnology.com';
     const currentUrl = `${baseUrl}/blog${search || selectedCategory || selectedTag ? '?' : ''}${search ? `search=${search}` : ''}${selectedCategory ? `category=${selectedCategory}` : ''}${selectedTag ? `tag=${selectedTag}` : ''}`;
     const pageTitle = selectedCategory 
-      ? `${selectedCategory} Articles | IT Project Blog | Infinity`
+      ? `${selectedCategory} Articles | IT Project Blog | Infinity Web Technology`
       : search
-      ? `Search: ${search} | IT Project Blog | Infinity`
-      : 'IT Project Blog | Technology Articles & Tutorials | Infinity Marketplace';
+      ? `Search: ${search} | IT Project Blog | Infinity Web Technology`
+      : 'IT Project Blog | Technology Articles & Tutorials | Infinity Web Technology';
     const pageDescription = selectedCategory
-      ? `Read ${selectedCategory} articles about IT projects, technology tutorials, and development tips. Stay updated with latest trends in React, Python, AI/ML, and Full-Stack development.`
+      ? `Read ${selectedCategory} articles about IT projects, technology tutorials, and development tips at Infinity Web Technology. Stay updated with latest trends in React, Python, AI/ML, and Full-Stack development.`
       : search
-      ? `Search results for "${search}" - Find articles about IT projects, technology tutorials, and development tips.`
-      : 'Read articles about IT projects, technology tutorials, React, Python, AI/ML, Full-Stack development, and more. Stay updated with latest trends and best practices.';
+      ? `Search results for "${search}" - Find articles about IT projects, technology tutorials, and development tips at Infinity Web Technology.`
+      : 'Read articles about IT projects, technology tutorials, React, Python, AI/ML, Full-Stack development, and more at Infinity Web Technology. Stay updated with latest trends and best practices.';
 
     const breadcrumbs = [
       { name: 'Home', url: baseUrl },
@@ -131,7 +131,7 @@ export default function BlogList() {
     return {
       title: pageTitle,
       description: pageDescription,
-      keywords: 'IT project blog, technology articles, React tutorials, Python guides, AI ML articles, Full-Stack development, programming tutorials, web development blog',
+      keywords: 'IT project blog, technology articles, React tutorials, Python guides, AI ML articles, Full-Stack development, programming tutorials, web development blog, Infinity Web Technology',
       image: 'https://infinitywebtechnology.com/og-image.jpg',
       url: currentUrl,
       type: 'website',

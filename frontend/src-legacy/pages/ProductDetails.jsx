@@ -126,19 +126,19 @@ export default function ProductDetails() {
     const tags = product.tags || [];
 
     // Generate optimized title (max 60 chars for SEO)
-    const baseTitle = `${product.title} | Buy IT Project`;
+    const baseTitle = `${product.title} | Infinity Web Technology`;
     const optimizedTitle = baseTitle.length > 60
       ? `${baseTitle.substring(0, 57)}...`
       : baseTitle;
 
     // Generate optimized description (max 155 chars)
-    let optimizedDescription = `Buy ${product.title} with complete source code, documentation, and database. ${techStackStr ? `${techStackStr} ` : ''}Available at ₹${price}.`;
+    let optimizedDescription = `Buy ${product.title} with complete source code, documentation, and database from Infinity Web Technology. ${techStackStr ? `${techStackStr} ` : ''}Available at ₹${price}.`;
     if (optimizedDescription.length > 155) {
       optimizedDescription = optimizedDescription.substring(0, 152) + '...';
     }
 
     // Combine keywords with tags
-    const keywordsBase = `${product.title}, ${categoryStr}, ${techStackStr}, IT project with source code, buy ${categoryStr.toLowerCase()}, college project, final year project`;
+    const keywordsBase = `${product.title}, ${categoryStr}, ${techStackStr}, IT project with source code, buy ${categoryStr.toLowerCase()}, college project, final year project, Infinity Web Technology`;
     const keywordsWithTags = tags.length > 0
       ? `${keywordsBase}, ${tags.slice(0, 10).join(', ')}`
       : keywordsBase;

@@ -1,102 +1,88 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  FiSun, 
-  FiCpu, 
-  FiZap, 
-  FiLayers,
-  FiDatabase,
-  FiTrendingUp
-} from 'react-icons/fi';
+import React from "react";
+import { motion } from "framer-motion";
+import { FiCpu, FiZap, FiLayers, FiTrendingUp } from "react-icons/fi";
 
-// Default orbit configuration
+// ✅ Center icon EXACT same symbol
+const CenterArrowIcon = () => (
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#000000ff"
+    strokeWidth="2.4"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="7 8 12 3 17 8" />
+    <polyline points="7 16 12 21 17 16" />
+  </svg>
+);
+
+// ✅ orbit ring setup (matching image)
 const defaultOrbits = [
   {
     id: 1,
-    radiusFactor: 0.25,
-    speed: 10,
-    icon: <FiTrendingUp className="text-blue-400" size={24} />,
-    iconSize: 24,
-    orbitColor: 'rgba(59, 130, 246, 0.3)',
-    orbitThickness: 2,
+    radiusFactor: 0.28,
+    speed: 18,
+    icon: <FiTrendingUp className="text-orange-400" size={26} />,
+    iconSize: 26,
+    orbitColor: "rgba(99,102,241,0.18)",
   },
   {
     id: 2,
-    radiusFactor: 0.4,
-    speed: 14,
-    icon: <FiLayers className="text-green-400" size={24} />,
-    iconSize: 24,
-    orbitColor: 'rgba(34, 197, 94, 0.3)',
-    orbitThickness: 2,
+    radiusFactor: 0.44,
+    speed: 22,
+    icon: <FiLayers className="text-green-400" size={26} />,
+    iconSize: 26,
+    orbitColor: "rgba(34,197,94,0.14)",
   },
   {
     id: 3,
-    radiusFactor: 0.55,
-    speed: 18,
-    icon: <FiCpu className="text-purple-400" size={24} />,
-    iconSize: 24,
-    orbitColor: 'rgba(168, 85, 247, 0.3)',
-    orbitThickness: 2,
+    radiusFactor: 0.6,
+    speed: 26,
+    icon: <FiCpu className="text-purple-500" size={26} />,
+    iconSize: 26,
+    orbitColor: "rgba(168,85,247,0.14)",
   },
   {
     id: 4,
-    radiusFactor: 0.7,
-    speed: 22,
-    icon: <FiZap className="text-yellow-400" size={24} />,
-    iconSize: 24,
-    orbitColor: 'rgba(234, 179, 8, 0.3)',
-    orbitThickness: 2,
+    radiusFactor: 0.78,
+    speed: 30,
+    icon: <FiZap className="text-yellow-400" size={26} />,
+    iconSize: 26,
+    orbitColor: "rgba(234,179,8,0.14)",
   },
 ];
 
-/**
- * BeamCircle Component
- * Animated component that renders multiple orbiting icons around a central element
- * 
- * @param {number} size - The overall diameter of the circular animation area
- * @param {React.ReactNode} centerIcon - The central icon or React node
- * @param {Array} orbits - Array of orbit configuration objects
- */
-export function BeamCircle({ 
-  size = 300, 
-  centerIcon = null,
-  orbits = defaultOrbits 
-}) {
-  const centerSize = size * 0.15;
+export default function BeamCircle({ size = 420, centerIcon = (
+  <img src="/devops.svg" alt="DevOps" style={{ width: '68%', height: '68%', objectFit: 'contain' }} />
+), orbits = defaultOrbits }) {
   const centerX = size / 2;
   const centerY = size / 2;
+  const centerSize = size * 0.22;
 
   return (
-    <div 
-      className="relative flex items-center justify-center"
-      style={{ width: size, height: size }}
-    >
-      {/* Render orbit circles and icons */}
+    <div className="relative flex items-center justify-center pointer-events-none" style={{ width: size, height: size }}>
+      {/* Render dashed rings and rotating icons */}
       {orbits.map((orbit) => {
         const radius = (size / 2) * orbit.radiusFactor;
-        const orbitThickness = orbit.orbitThickness || 2;
-        const orbitColor = orbit.orbitColor || 'rgba(0, 0, 0, 0.1)';
 
         return (
           <div key={orbit.id} className="absolute inset-0">
-            {/* Orbit circle */}
-            <svg
-              className="absolute inset-0"
-              style={{ width: size, height: size }}
-            >
+            <svg className="absolute inset-0" style={{ width: size, height: size }}>
               <circle
                 cx={centerX}
                 cy={centerY}
                 r={radius}
                 fill="none"
-                stroke={orbitColor}
-                strokeWidth={orbitThickness}
-                strokeDasharray="5,5"
-                className="opacity-50"
+                stroke={orbit.orbitColor}
+                strokeWidth={1.4}
+                strokeDasharray="8,8"
+                strokeLinecap="round"
               />
             </svg>
 
-            {/* Orbiting icon container */}
             <motion.div
               className="absolute"
               style={{
@@ -104,24 +90,16 @@ export function BeamCircle({
                 height: radius * 2,
                 left: centerX - radius,
                 top: centerY - radius,
-                transformOrigin: 'center center',
+                transformOrigin: "center center",
               }}
-              animate={{
-                rotate: 360,
-              }}
-              transition={{
-                duration: orbit.speed || 10,
-                repeat: Infinity,
-                ease: 'linear',
-              }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: orbit.speed, repeat: Infinity, ease: "linear" }}
             >
               <div
                 className="absolute"
                 style={{
-                  width: orbit.iconSize || 24,
-                  height: orbit.iconSize || 24,
-                  left: radius - (orbit.iconSize || 24) / 2,
-                  top: -(orbit.iconSize || 24) / 2,
+                  top: -((orbit.iconSize || 26) / 2),
+                  left: radius - (orbit.iconSize || 26) / 2,
                 }}
               >
                 {orbit.icon}
@@ -131,39 +109,59 @@ export function BeamCircle({
         );
       })}
 
-      {/* Central icon */}
-      {centerIcon && (
-        <motion.div
-          className="absolute flex items-center justify-center z-10"
-          style={{
-            width: centerSize,
-            height: centerSize,
-            left: centerX - centerSize / 2,
-            top: centerY - centerSize / 2,
-          }}
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            rotate: {
-              duration: 20,
-              repeat: Infinity,
-              ease: 'linear',
-            },
-            scale: {
-              duration: 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            },
-          }}
-        >
-          {centerIcon}
-        </motion.div>
-      )}
+      {/* soft halo behind center */}
+      <div
+        className="absolute rounded-full"
+        style={{
+          width: centerSize * 1.6,
+          height: centerSize * 1.6,
+          left: centerX - (centerSize * 1.6) / 2,
+          top: centerY - (centerSize * 1.6) / 2,
+          background: 'radial-gradient(circle, rgba(99,102,241,0.08), transparent)',
+          filter: 'blur(10px)',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Center bubble with transparent surface so SVG background shows through */}
+      <div
+        className="absolute flex items-center justify-center rounded-full"
+        style={{
+          width: centerSize,
+          height: centerSize,
+          left: centerX - centerSize / 2,
+          top: centerY - centerSize / 2,
+          background: 'transparent',
+          border: '1px solid rgba(255,255,255,0.06)',
+          boxShadow: '0 8px 24px rgba(15,23,42,0.08)',
+          zIndex: 2,
+        }}
+      >
+        {React.cloneElement(centerIcon, { style: { ...(centerIcon.props?.style || {}), background: 'transparent' } })}
+      </div>
+
+      {/* thin dashed ring around the center */}
+      <svg
+        className="absolute"
+        style={{
+          width: centerSize * 1.6,
+          height: centerSize * 1.6,
+          left: centerX - (centerSize * 1.6) / 2,
+          top: centerY - (centerSize * 1.6) / 2,
+          zIndex: 1,
+        }}
+      >
+        <circle
+          cx={(centerSize * 1.6) / 2}
+          cy={(centerSize * 1.6) / 2}
+          r={(centerSize * 1.6) / 2 - 6}
+          fill="none"
+          stroke="rgba(99,102,241,0.12)"
+          strokeWidth={1.5}
+          strokeDasharray="4,6"
+          strokeLinecap="round"
+        />
+      </svg>
     </div>
   );
 }
-
-export default BeamCircle;
-

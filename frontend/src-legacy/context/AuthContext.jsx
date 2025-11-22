@@ -16,80 +16,89 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('token'));
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const initializedRef = useRef(false);
-  const initializingRef = useRef(false);
 
   const login = useCallback(async (email, password) => {
     try {
       const response = await authService.login({ email, password });
       const userData = response.data.user;
       const tokenData = response.data.token;
-      
+
+      // Check if user is verified
+      if (userData.isVerified === false) {
+        return {
+          success: false,
+          requiresVerification: true,
+          error: 'Please verify your email address',
+          email: email
+        };
+      }
+
+      // Trigger animation
+      setIsLoggingIn(true);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
       localStorage.setItem('token', tokenData);
       localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
       setToken(tokenData);
       setIsAuthenticated(true);
+      setIsLoggingIn(false);
       return { success: true };
     } catch (error) {
-      // Extract error message from various possible locations
+      setIsLoggingIn(false);
       let errorMessage = 'Login failed';
-      
       if (error.response) {
-        // Server responded with error
-        errorMessage = error.response.data?.message || 
-                      error.response.data?.error || 
-                      (Array.isArray(error.response.data?.errors) 
-                        ? error.response.data.errors.map(e => e.msg || e.message).join(', ')
-                        : error.response.data?.errors) ||
-                      `Server error: ${error.response.status}`;
-        
-        // Log detailed error in development
-        if (import.meta.env.DEV) {
-          console.error('[AuthContext] Login error details:', {
-            status: error.response.status,
-            statusText: error.response.statusText,
-            data: error.response.data,
-            message: errorMessage
-          });
-        }
+        errorMessage = error.response.data?.message ||
+          error.response.data?.error ||
+          (Array.isArray(error.response.data?.errors)
+            ? error.response.data.errors.map(e => e.msg || e.message).join(', ')
+            : error.response.data?.errors) ||
+          `Server error: ${error.response.status}`;
       } else if (error.request) {
-        // Request was made but no response received
         errorMessage = 'No response from server. Please check if the backend is running.';
-        if (import.meta.env.DEV) {
-          console.error('[AuthContext] No response from server:', error.request);
-        }
       } else {
-        // Error setting up the request
         errorMessage = error.message || 'Login failed';
-        if (import.meta.env.DEV) {
-          console.error('[AuthContext] Request setup error:', error);
-        }
       }
-      
       return { success: false, error: errorMessage };
     }
   }, []);
 
   const register = useCallback(async (name, email, password, userType) => {
     try {
-      const response = await authService.register({ name, email, password, userType });
-      const userData = response.data.user;
-      const tokenData = response.data.token;
-      
-      localStorage.setItem('token', tokenData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      setToken(tokenData);
-      setIsAuthenticated(true);
+      await authService.register({ name, email, password, userType });
+      // Do not set auth state here, wait for OTP verification
       return { success: true };
     } catch (error) {
       return { success: false, error: error.response?.data?.message || 'Registration failed' };
     }
   }, []);
 
+  const verifyOTP = useCallback(async (email, otp) => {
+    try {
+      const response = await authService.verifyOTP({ email, otp });
+      const userData = response.data.user;
+      const tokenData = response.data.token;
+
+      localStorage.setItem('token', tokenData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+      setToken(tokenData);
+      setIsAuthenticated(true);
+      return { success: true, user: userData };
+    } catch (error) {
+      return { success: false, error: error.response?.data?.message || 'Verification failed' };
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     try {
+      setIsLoggingOut(true);
+      // Wait for animation to play
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
       await authService.logout();
     } catch (error) {
       // Ignore errors on logout
@@ -99,6 +108,7 @@ export function AuthProvider({ children }) {
       setUser(null);
       setToken(null);
       setIsAuthenticated(false);
+      setIsLoggingOut(false);
     }
     return { success: true };
   }, []);
@@ -116,40 +126,31 @@ export function AuthProvider({ children }) {
   }, []);
 
   const googleLogin = useCallback(() => {
-    // Get API base URL (without /api suffix) - useful for OAuth redirects
     const getApiBaseUrl = () => {
-      // In development mode, always use localhost
       if (import.meta.env.DEV) {
         return 'http://localhost:5000';
       }
-      
-      // In production, use VITE_API_URL if set, otherwise use default production URL
       if (import.meta.env.PROD) {
         const envUrl = import.meta.env.VITE_API_URL;
         if (envUrl) {
-          // Remove /api suffix if present
           return envUrl.replace(/\/api\/?$/, '');
         }
         return 'https://www.api.infinitywebtechnology.com';
       }
-      
-      // Fallback: use local backend
       return 'http://localhost:5000';
     };
-    
+
     window.location.href = `${getApiBaseUrl()}/api/auth/google`;
   }, []);
 
   useEffect(() => {
-    // Prevent duplicate initialization (React StrictMode protection)
     if (initializedRef.current) {
       return;
     }
-    
+
     const initializeAuth = async () => {
-      // Mark as initialized immediately to prevent duplicate calls
       initializedRef.current = true;
-      
+
       const storedToken = localStorage.getItem('token');
       if (!storedToken) {
         setLoading(false);
@@ -160,26 +161,22 @@ export function AuthProvider({ children }) {
         const response = await authService.getCurrentUser();
         const userData = response.data.user;
         const tokenData = response.data.token;
-        
+
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', tokenData);
         setUser(userData);
         setToken(tokenData);
         setIsAuthenticated(true);
       } catch (error) {
-        // Handle rate limiting - don't clear auth on 429, just wait
         if (error.response?.status === 429) {
-          console.warn('Rate limit exceeded during auth initialization. Will retry on next page load.');
-          // Don't clear auth state on rate limit, just stop loading
+          console.warn('Rate limit exceeded during auth initialization.');
           setLoading(false);
           return;
         }
-        
-        // Only log non-401 errors (401 is expected if token is invalid)
+
         if (error.response?.status !== 401) {
           console.error('Auth initialization error:', error);
         }
-        // Token is invalid, clear everything
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
@@ -191,15 +188,18 @@ export function AuthProvider({ children }) {
     };
 
     initializeAuth();
-  }, []); // Empty dependency array - only run once
+  }, []);
 
   const value = {
     user,
     token,
     loading,
     isAuthenticated,
+    isLoggingOut,
+    isLoggingIn,
     login,
     register,
+    verifyOTP,
     logout,
     updateProfile,
     googleLogin
@@ -211,8 +211,6 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    // In development, provide a default context to prevent crashes
-    // This can happen during React StrictMode double-rendering
     if (import.meta.env.DEV) {
       console.warn('[AuthContext] useAuth called outside AuthProvider, returning default values');
       return {
@@ -220,11 +218,14 @@ export function useAuth() {
         token: null,
         loading: true,
         isAuthenticated: false,
+        isLoggingOut: false,
+        isLoggingIn: false,
         login: async () => ({ success: false, error: 'Auth not initialized' }),
         register: async () => ({ success: false, error: 'Auth not initialized' }),
+        verifyOTP: async () => ({ success: false, error: 'Auth not initialized' }),
         logout: async () => ({ success: true }),
         updateProfile: async () => ({ success: false, error: 'Auth not initialized' }),
-        googleLogin: () => {}
+        googleLogin: () => { }
       };
     }
     throw new Error('useAuth must be used within AuthProvider');

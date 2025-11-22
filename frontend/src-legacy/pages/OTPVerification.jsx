@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import authService from '../api/authService';
 import toast from 'react-hot-toast';
 import { FiMail, FiArrowLeft, FiClock, FiCheck } from 'react-icons/fi';
@@ -80,6 +81,8 @@ export default function OTPVerification() {
     }
   };
 
+  const { verifyOTP } = useAuth();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const otpString = otp.join('');
@@ -98,12 +101,9 @@ export default function OTPVerification() {
     setLoading(true);
 
     try {
-      const response = await authService.verifyOTP({
-        email,
-        otp: otpString
-      });
+      const result = await verifyOTP(email, otpString);
 
-      if (response.data?.token) {
+      if (result.success) {
         toast.success('Email verified successfully!');
         localStorage.removeItem('otpEmail');
         localStorage.removeItem('otpUserType');
@@ -116,15 +116,14 @@ export default function OTPVerification() {
         } else {
           navigate('/');
         }
+      } else {
+        toast.error(result.error || 'Invalid OTP. Please try again.');
+        setOtp(['', '', '', '', '', '']);
+        inputRefs.current[0]?.focus();
       }
     } catch (error) {
       console.error('OTP verification error:', error);
-      const errorMessage = error.response?.data?.message || 'Invalid OTP. Please try again.';
-      toast.error(errorMessage);
-      
-      // Clear OTP on error
-      setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0]?.focus();
+      toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

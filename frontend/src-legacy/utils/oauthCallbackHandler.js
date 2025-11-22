@@ -57,7 +57,7 @@ export const handleOAuthCallback = async ({
 
       // Show error toast
       toast.error(errorMessage, { duration: 5000 });
-      
+
       // Show help message if available
       if (helpMessage) {
         setTimeout(() => {
@@ -81,18 +81,33 @@ export const handleOAuthCallback = async ({
       try {
         // Store token
         localStorage.setItem('token', token);
-        
+
         // Dispatch storage event to notify AuthContext
         window.dispatchEvent(new Event('storage'));
 
         // Fetch user profile
         const response = await authService.getCurrentUser();
-        
+
         if (response.data?.user) {
-          // Store user data
-          localStorage.setItem('user', JSON.stringify(response.data.user));
           const user = response.data.user;
-          
+
+          // Check if user is verified
+          if (user.isVerified === false) {
+            localStorage.removeItem('token');
+            window.dispatchEvent(new Event('storage'));
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            toast.error('Please verify your email address');
+
+            if (navigate) {
+              navigate('/verify-otp', { state: { email: user.email } });
+            }
+            return true;
+          }
+
+          // Store user data
+          localStorage.setItem('user', JSON.stringify(user));
+
           // Dispatch another storage event after user data is stored
           window.dispatchEvent(new Event('storage'));
 
@@ -107,13 +122,13 @@ export const handleOAuthCallback = async ({
 
           // Determine redirect path based on user type
           let redirectPath = '/';
-          
+
           if (user.role === 'admin') {
             redirectPath = '/admin';
-          } else if (user.userType === 'student') {
-            redirectPath = '/home/student';
-          } else if (user.userType === 'customer') {
-            redirectPath = '/home/customer';
+          } else {
+            // Always redirect to role selection to confirm/choose role
+            // The SelectRole page will handle pre-selection if userType exists
+            redirectPath = '/select-role';
           }
 
           // Call success callback if provided
@@ -132,7 +147,7 @@ export const handleOAuthCallback = async ({
         }
       } catch (err) {
         console.error('OAuth callback error:', err);
-        
+
         // Clean up on error
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -155,7 +170,7 @@ export const handleOAuthCallback = async ({
   } catch (err) {
     console.error('Error handling OAuth callback:', err);
     toast.error('An unexpected error occurred');
-    
+
     if (onError) {
       onError('unexpected_error', err.message);
     }

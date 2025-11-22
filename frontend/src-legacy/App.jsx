@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -9,6 +10,8 @@ import Loader from './components/Loader';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
+import LogoutAnimation from './components/LogoutAnimation';
+import LoginAnimation from './components/LoginAnimation';
 
 // Pages
 import Home from './pages/Home';
@@ -45,9 +48,10 @@ import BlogDetail from './pages/BlogDetail';
 import TermsAndConditions from './pages/TermsAndConditions';
 import ShippingPolicy from './pages/ShippingPolicy';
 import CancellationsAndRefunds from './pages/CancellationsAndRefunds';
+import SelectRole from './pages/SelectRole';
 
 // Lazy load PrivacyPolicy to avoid ad blocker issues
-const PrivacyPolicy = React.lazy(() => 
+const PrivacyPolicy = React.lazy(() =>
   import('./pages/PrivacyPolicy').catch(() => ({
     default: () => (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -58,8 +62,8 @@ const PrivacyPolicy = React.lazy(() =>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             Please disable your ad blocker to view this page, or contact us directly.
           </p>
-          <a 
-            href="mailto:infinitywebtechnology1@gmail.com" 
+          <a
+            href="mailto:infinitywebtechnology1@gmail.com"
             className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
           >
             Contact Us
@@ -71,7 +75,24 @@ const PrivacyPolicy = React.lazy(() =>
 );
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  // Helper component to redirect authenticated users to their home page
+  const AuthRedirect = () => {
+    if (!isAuthenticated) return null;
+
+    const userData = user || JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (userData.userType === 'student') {
+      return <Navigate to="/home/student" replace />;
+    } else if (userData.userType === 'customer') {
+      return <Navigate to="/home/customer" replace />;
+    } else if (userData.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    }
+
+    return <Navigate to="/" replace />;
+  };
 
   return (
     <Routes>
@@ -91,15 +112,23 @@ function AppRoutes() {
       />
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/" /> : <Login />}
+        element={isAuthenticated ? <AuthRedirect /> : <Login />}
       />
       <Route
         path="/register"
-        element={isAuthenticated ? <Navigate to="/" /> : <Register />}
+        element={isAuthenticated ? <AuthRedirect /> : <Register />}
       />
       <Route
         path="/verify-otp"
         element={isAuthenticated ? <Navigate to="/" /> : <OTPVerification />}
+      />
+      <Route
+        path="/select-role"
+        element={
+          <ProtectedRoute>
+            <SelectRole />
+          </ProtectedRoute>
+        }
       />
       <Route
         path="/dashboard"
@@ -271,13 +300,13 @@ function AppRoutes() {
       />
       <Route path="/blog" element={<BlogList />} />
       <Route path="/blog/:slug" element={<BlogDetail />} />
-      <Route 
-        path="/privacy-policy" 
+      <Route
+        path="/privacy-policy"
         element={
           <Suspense fallback={<Loader />}>
             <PrivacyPolicy />
           </Suspense>
-        } 
+        }
       />
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
       <Route path="/shipping-policy" element={<ShippingPolicy />} />
@@ -290,11 +319,12 @@ function AppRoutes() {
 function AppContent() {
   const location = useLocation();
   const { isDark } = useTheme();
+  const { isLoggingOut, isLoggingIn } = useAuth();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isHomePage = location.pathname === '/';
 
   // Theme-aware background classes - matching About/Contact pages
-  const bgClass = isDark 
+  const bgClass = isDark
     ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
     : 'bg-gradient-to-br from-slate-50 via-indigo-50/30 to-primary-50/20';
 
@@ -304,6 +334,10 @@ function AppContent() {
       <a href="#main-content" className="skip-to-main">
         Skip to main content
       </a>
+      <AnimatePresence>
+        {isLoggingOut && <LogoutAnimation />}
+        {isLoggingIn && <LoginAnimation />}
+      </AnimatePresence>
       {!isAdminRoute && <Navbar isHomePage={isHomePage} />}
       <main id="main-content" className="flex-1" role="main">
         <AppRoutes />

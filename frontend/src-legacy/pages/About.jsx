@@ -33,9 +33,9 @@ export default function About() {
   const seoData = useMemo(() => {
     const baseUrl = 'https://infinitywebtechnology.com';
     return {
-      title: 'About Us | Infinity IT Project Marketplace | India\'s Leading IT Project Platform',
-      description: 'Learn about Infinity - India\'s leading IT project marketplace. We connect students with custom project solutions and provide ready-made IT projects for customers. Serving 10K+ customers with 500+ projects.',
-      keywords: 'about infinity, IT project marketplace, IT projects India, buy IT projects, custom IT projects, college projects, final year projects',
+      title: 'About Us | Infinity IT Project Marketplace | Ready-made & Custom IT Projects',
+      description: 'Infinity connects students and customers across India with high-quality ready-made and custom IT projects. Discover our mission, services, quality guarantees, and how we help students publish projects and customers find reliable solutions quickly.',
+      keywords: 'Infinity, IT project marketplace, ready-made IT projects, publish projects, college projects, final year projects, custom IT solutions, India IT projects, student projects',
       image: 'https://infinitywebtechnology.com/og-image.jpg',
       url: `${baseUrl}/about`,
       type: 'website',
@@ -47,19 +47,26 @@ export default function About() {
         '@context': 'https://schema.org',
         '@type': 'AboutPage',
         name: 'About Infinity IT Project Marketplace',
-        description: 'Learn about Infinity - India\'s leading IT project marketplace connecting students and customers.',
+        description: 'Infinity connects students and customers with ready-made and custom IT projects across India. We focus on quality, documentation, and excellent support.',
         url: `${baseUrl}/about`,
         mainEntity: {
           '@type': 'Organization',
           name: 'Infinity Web Technology',
           url: baseUrl,
-          description: 'India\'s leading IT project marketplace offering 500+ ready-made projects',
+          description: 'A trusted IT project marketplace offering hundreds of ready-made projects and a platform for students to publish their work.',
           email: 'infinitywebtechnology1@gmail.com',
           address: {
             '@type': 'PostalAddress',
             addressCountry: 'IN'
           }
-        }
+        },
+        potentialAction: [
+          {
+            '@type': 'SearchAction',
+            'target': `${baseUrl}/products?query={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          }
+        ]
       }
     };
   }, []);
@@ -102,11 +109,78 @@ export default function About() {
     }
   ];
 
+  const faqs = [
+    {
+      q: 'What types of projects do you offer?',
+      a: 'We offer a wide range of ready-made IT projects across React, Node.js, Python, AI/ML, Full-Stack applications, mobile apps, and more. Each project includes source code, setup instructions, and documentation.'
+    },
+    {
+      q: 'Can students publish their own projects?',
+      a: 'Yes — students can publish their projects on our platform to earn, share their work, and reach customers who need custom solutions.'
+    },
+    {
+      q: 'How do I get support after purchase?',
+      a: 'Every purchase includes support via email. We also provide optional paid support or customization services for complex requirements.'
+    },
+    {
+      q: 'Is the code quality verified?',
+      a: 'Yes — every project goes through quality checks including code review, documentation verification, and automated tests where applicable.'
+    }
+  ];
+
+  const jsonLd = useMemo(() => {
+    const org = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Infinity Web Technology',
+      url: 'https://infinitywebtechnology.com',
+      logo: 'https://infinitywebtechnology.com/og-image.jpg',
+      contactPoint: [{
+        '@type': 'ContactPoint',
+        telephone: '+91-0000000000',
+        contactType: 'customer service',
+        areaServed: 'IN'
+      }]
+    };
+
+    const faqEntities = faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a
+      }
+    }));
+
+    const faqSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqEntities
+    };
+
+    return [org, faqSchema];
+  }, [faqs]);
+
   return (
     <PageLayout
       title="About Infinity"
       subtitle="Your trusted marketplace for IT projects. We connect students with custom project solutions and provide ready-made IT projects for customers across India."
     >
+      {/* Visible H1 for SEO */}
+      <header className="mb-6">
+        <h1 className={cn('text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2', commonClasses.textBody(isDark))}>
+          About Infinity — India’s Trusted IT Project Marketplace
+        </h1>
+        <p className={cn('text-sm sm:text-base md:text-lg', commonClasses.textMuted(isDark))}>
+          We help students publish projects and customers find reliable, ready-made and custom IT solutions quickly.
+        </p>
+      </header>
+
+      {/* JSON-LD for Organization + FAQPage to boost SEO/rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Stats Section */}
       <motion.section 
         className={commonClasses.section}
@@ -135,6 +209,96 @@ export default function About() {
               );
             })}
           </div>
+        </div>
+      </motion.section>
+
+      {/* Services & How It Works */}
+      <motion.section 
+        className={commonClasses.section}
+        variants={animationVariants.staggerContainer}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+      >
+        <div className={commonClasses.containerSmall}>
+          <motion.div variants={animationVariants.fadeIn} className={commonClasses.card(isDark)}>
+            <h2 className={cn(commonClasses.heading2(isDark), 'text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6')}>
+              <span className={commonClasses.gradientText}>What We Offer</span>
+            </h2>
+            <div className={cn('space-y-4 text-sm sm:text-base md:text-lg leading-relaxed', commonClasses.textBody(isDark))}>
+              <p>
+                Infinity provides both <strong>ready-made</strong> and <strong>custom</strong> IT projects. Browse our curated catalog for instant downloads or request a custom project tailored to your specifications.
+              </p>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Ready-made projects with complete source code & documentation</li>
+                <li>Custom project requests and student-led development</li>
+                <li>Optional customization, deployment, and support</li>
+                <li>Secure payment options and fast delivery</li>
+              </ul>
+            </div>
+          </motion.div>
+
+          <motion.div variants={animationVariants.slideUp} className={cn(commonClasses.card(isDark), 'mt-6')}>
+            <h3 className={cn(commonClasses.heading3(isDark), 'text-xl sm:text-2xl mb-3')}>How It Works — Simple, Transparent, Fast</h3>
+            <ol className="list-decimal pl-5 space-y-3 text-sm sm:text-base md:text-base leading-relaxed">
+              <li><strong>Browse</strong> the catalog and choose a ready-made project or post a custom request.</li>
+              <li><strong>Purchase or Request</strong> — pay securely and receive the project files instantly or get matched with a student developer.</li>
+              <li><strong>Download & Run</strong> — each project includes setup instructions, dependencies, and documentation.</li>
+              <li><strong>Support</strong> — reach out for clarifications, minor fixes, or paid customization.</li>
+            </ol>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Trust, Security & Support */}
+      <motion.section 
+        className={commonClasses.section}
+        variants={animationVariants.fadeIn}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+      >
+        <div className={commonClasses.container}>
+          <motion.div variants={animationVariants.fadeIn} className={cn(commonClasses.card(isDark))}>
+            <h2 className={cn(commonClasses.heading2(isDark), 'text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6')}>
+              <span className={commonClasses.gradientText}>Trust & Security</span>
+            </h2>
+            <div className={cn('grid sm:grid-cols-1 md:grid-cols-2 gap-6', commonClasses.textBody(isDark))}>
+              <div>
+                <p className="mb-3">We prioritise trust: every seller is verified, and every project includes clear licensing terms. Payments are processed securely and customer data is protected with standard security practices.</p>
+                <p className="mb-3">We also offer an optional code review and a money-back guarantee for projects that are not delivered as described.</p>
+              </div>
+              <div>
+                <p className="mb-3">Support is available through our contact form and email. For development or deployment assistance, we provide paid professional services.</p>
+                <p className="mb-3">For enterprise inquiries or bulk licensing, contact our sales team via the <a href="/contact" className="text-primary underline">Contact</a> page.</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* FAQ Section */}
+      <motion.section 
+        className={commonClasses.section}
+        variants={animationVariants.staggerContainer}
+        initial="initial"
+        whileInView="animate"
+        viewport={{ once: true }}
+      >
+        <div className={commonClasses.containerSmall}>
+          <motion.div variants={animationVariants.fadeIn} className={commonClasses.card(isDark)}>
+            <h2 className={cn(commonClasses.heading2(isDark), 'text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6')}>
+              <span className={commonClasses.gradientText}>Frequently Asked Questions</span>
+            </h2>
+            <div className="space-y-4">
+              {faqs.map((f, i) => (
+                <details key={i} className={cn('p-4 rounded-md', commonClasses.cardHover(isDark))}>
+                  <summary className={cn('font-medium cursor-pointer', commonClasses.textBody(isDark))}>{f.q}</summary>
+                  <div className={cn('mt-2 text-sm', commonClasses.textMuted(isDark))}>{f.a}</div>
+                </details>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </motion.section>
 
@@ -212,25 +376,75 @@ export default function About() {
             className={commonClasses.card(isDark)}
           >
             <h2 className={cn(commonClasses.heading2(isDark), 'text-2xl sm:text-3xl md:text-4xl mb-4 sm:mb-6')}>
-              <span className={commonClasses.gradientText}>
-                Our Story
-              </span>
+              <span className={commonClasses.gradientText}>Our Story</span>
             </h2>
-            <div className={cn('space-y-3 sm:space-y-4 text-sm sm:text-base md:text-lg leading-relaxed', commonClasses.textBody(isDark))}>
+
+            <div className={cn('space-y-4 text-sm sm:text-base md:text-lg leading-relaxed', commonClasses.textBody(isDark))}>
               <p>
-                <strong>Infinity</strong> was born from a simple idea: making <em>quality IT projects</em> accessible to everyone. 
-                We noticed that <strong>college students</strong> often struggle to find <em>custom projects</em> for their coursework, 
-                while <strong>professionals and businesses</strong> need <em>ready-made solutions</em> quickly.
+                <strong>Infinity</strong> started as a student-driven project to solve a real problem: students needed reliable, well-documented
+                code for coursework and real-world builds, while businesses and professionals required fast, dependable solutions without long
+                development timelines. We built a marketplace that values quality, transparency, and learning — where students can publish work
+                and customers can purchase projects they can trust.
               </p>
+
               <p>
-                Today, we're <strong>India's leading IT project marketplace</strong>, serving <em>thousands of students and customers</em>. 
-                We specialize in <strong>React, Python, AI/ML, Full-Stack web applications</strong>, and more. Every project 
-                is carefully <em>crafted, tested, and delivered</em> with <strong>complete source code and documentation</strong>.
+                Over the years, Infinity has grown into a community of contributors and customers across India. We curate projects in
+                technologies such as <strong>React, Node.js, Python, Django, Flask, AI/ML, and Android</strong>. Each listing includes setup
+                guides, sample data, and optional enhancement services so buyers can deploy quickly and students can showcase their skills.
               </p>
+
               <p>
-                Our commitment is simple: provide the <strong>best IT projects</strong> at <em>affordable prices</em>, all in <strong>Indian Rupees</strong>, 
-                with <em>instant downloads</em> and <strong>excellent customer support</strong>.
+                We focus on three pillars: <strong>Learn</strong> (students gain real-world experience), <strong>Earn</strong> (publish and monetize
+                projects), and <strong>Deliver</strong> (customers receive working, documented solutions). Our team continually improves
+                the platform with better search, categorization, and secure payment processing.
               </p>
+
+              {/* Timeline */}
+              <div className="mt-6">
+                <h3 className={cn(commonClasses.heading3(isDark), 'text-lg sm:text-xl mb-3')}>Our Journey</h3>
+                <ol className="border-l-2 border-gray-200 dark:border-gray-700 pl-4 space-y-4">
+                  <li>
+                    <div className="text-xs text-muted">2019</div>
+                    <div className="font-medium">Foundation</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">Platform launched to help students share project templates and earn.</div>
+                  </li>
+                  <li>
+                    <div className="text-xs text-muted">2020-2021</div>
+                    <div className="font-medium">Growth</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">Expanded categories, improved QA checks, and introduced instant downloads.</div>
+                  </li>
+                  <li>
+                    <div className="text-xs text-muted">2022</div>
+                    <div className="font-medium">Marketplace Maturity</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">Introduced publishing workflow for students and optional customization services.</div>
+                  </li>
+                  <li>
+                    <div className="text-xs text-muted">2024</div>
+                    <div className="font-medium">Quality & Scale</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">500+ projects listed and robust support and review systems in place.</div>
+                  </li>
+                </ol>
+              </div>
+
+              {/* Team */}
+              <div className="mt-6">
+                <h3 className={cn(commonClasses.heading3(isDark), 'text-lg sm:text-xl mb-3')}>Meet Our Core Team</h3>
+                <div className="flex justify-center">
+                  <div className={cn(commonClasses.cardHover(isDark), 'p-6 w-full sm:w-80 flex items-center gap-4')}>
+                    <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white">S</div>
+                    <div>
+                      <div className="font-medium">Sanjay — Founder</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">Product strategy, community growth, partnerships.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="mt-6 text-center">
+                <a href="/contact" className="inline-block px-6 py-2 bg-primary text-white rounded-md shadow-md">contact us</a>
+                <p className="text-xs mt-2 text-gray-500">Or <a href="/contact" className="underline text-primary">contact us</a> for custom requests and enterprise licensing.</p>
+              </div>
             </div>
           </motion.div>
         </div>

@@ -988,6 +988,7 @@ input, textarea, select, button {
     font-size: 2rem;
   }
 
+
   .blog-content h2 {
     font-size: 1.75rem;
   }
@@ -995,4 +996,14 @@ input, textarea, select, button {
   .blog-content h3 {
     font-size: 1.5rem;
   }
+}
+
+/* Hide scrollbar while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }

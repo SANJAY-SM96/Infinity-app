@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 } else if (process.env.TRUST_PROXY !== undefined) {
   // Production: Use environment variable if explicitly set
   const trustProxyValue = process.env.TRUST_PROXY;
-  
+
   if (trustProxyValue === '0' || trustProxyValue === 'false') {
     app.set('trust proxy', false);
     console.log('🔒 Trust proxy disabled (explicitly set)');
@@ -84,7 +84,7 @@ const corsOptions = {
       'http://localhost:3000',
       'http://localhost:5173'
     ];
-    
+
     // Add CLIENT_URL from environment if provided
     if (process.env.CLIENT_URL) {
       const envOrigins = process.env.CLIENT_URL.split(',').map(url => url.trim());
@@ -94,28 +94,28 @@ const corsOptions = {
         }
       });
     }
-    
+
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) {
       return callback(null, true);
     }
-    
+
     // In development, allow any localhost origin
     if (process.env.NODE_ENV === 'development') {
       if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
         return callback(null, true);
       }
     }
-    
+
     // Check if origin is allowed (case-insensitive comparison)
     const originLower = origin.toLowerCase();
     const isAllowed = allowedOrigins.some(allowed => allowed.toLowerCase() === originLower);
-    
+
     // Log for debugging (only in development)
     if (process.env.NODE_ENV === 'development') {
       console.log(`CORS check - Origin: ${origin}, Allowed: ${isAllowed}`);
     }
-    
+
     if (isAllowed) {
       callback(null, true);
     } else {
@@ -163,27 +163,31 @@ app.use(helmet({
 
 // Additional Security Headers
 app.use((req, res, next) => {
-  // Force HTTPS redirect in production (but NOT for API routes)
+  // Force HTTPS redirect in production (but NOT for API routes or localhost)
   // API routes should return JSON, not redirects
-  if (process.env.NODE_ENV === 'production' && 
-      !req.path.startsWith('/api') && 
-      !req.path.startsWith('/health') &&
-      req.header('x-forwarded-proto') !== 'https') {
-    return res.redirect(`https://${req.header('host')}${req.url}`);
+  const host = req.header('host') || '';
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1') || host.includes('::1');
+
+  if (process.env.NODE_ENV === 'production' &&
+    !req.path.startsWith('/api') &&
+    !req.path.startsWith('/health') &&
+    !isLocalhost &&
+    req.header('x-forwarded-proto') !== 'https') {
+    return res.redirect(`https://${host}${req.url}`);
   }
-  
+
   // X-Frame-Options (already set by helmet, but explicit for clarity)
   res.setHeader('X-Frame-Options', 'DENY');
-  
+
   // X-Content-Type-Options
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  
+
   // Referrer-Policy
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   // Permissions-Policy
   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
-  
+
   next();
 });
 app.use(compression());
@@ -219,7 +223,7 @@ if (nodeEnv === 'production') {
       // req.ip is safe because we only trust specific proxies
       // Fallback to connection remoteAddress if ip is not available
       const clientIP = req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
-      
+
       // Sanitize IP address (remove port if present, handle IPv6)
       let sanitizedIP = clientIP;
       if (clientIP.includes(':')) {
@@ -233,17 +237,19 @@ if (nodeEnv === 'production') {
           sanitizedIP = clientIP.split('%')[0]; // Remove zone index if present
         }
       }
-      
+
       // Log for debugging (only if explicitly enabled)
       if (process.env.LOG_RATE_LIMIT === 'true' && process.env.NODE_ENV === 'development') {
         console.log(`Rate limit key: ${sanitizedIP} (from ${req.ip || 'direct'})`);
       }
-      
+
       return sanitizedIP;
     },
     skip: (req) => {
-      // Skip rate limiting for health checks
-      return req.path === '/health' || req.path === '/api';
+      // Skip rate limiting for health checks and localhost
+      const clientIP = req.ip || req.connection?.remoteAddress || 'unknown';
+      const isLocalhost = clientIP === '::1' || clientIP === '127.0.0.1' || clientIP.includes('127.0.0.1');
+      return req.path === '/health' || req.path === '/api' || isLocalhost;
     },
     // Custom handler for rate limit exceeded
     handler: (req, res) => {
@@ -254,7 +260,7 @@ if (nodeEnv === 'production') {
       });
     }
   });
-  
+
   app.use('/api/', limiter);
   console.log('✅ Rate limiting enabled (production mode)');
   console.log('   🔒 Safe IP extraction configured');
@@ -275,7 +281,7 @@ app.get('/api/diagnostics/frontend', (req, res) => {
   const frontendPath = process.env.FRONTEND_PATH || path.join(__dirname, '../frontend/dist');
   const resolvedFrontendPath = path.resolve(frontendPath);
   const indexPath = path.join(resolvedFrontendPath, 'index.html');
-  
+
   const diagnostics = {
     nodeEnv: process.env.NODE_ENV || 'not set',
     serveFrontend: process.env.SERVE_FRONTEND || 'not set',
@@ -285,13 +291,13 @@ app.get('/api/diagnostics/frontend', (req, res) => {
     indexHtmlExists: fs.existsSync(indexPath),
     willServeFrontend: process.env.SERVE_FRONTEND !== 'false' && (process.env.NODE_ENV === 'production' || fs.existsSync(resolvedFrontendPath))
   };
-  
+
   res.json(diagnostics);
 });
 
 // Root API endpoint
 app.get('/api', (req, res) => {
-  res.json({ 
+  res.json({
     success: true,
     message: 'Infinity App API is running',
     version: '1.0.0',
@@ -353,7 +359,7 @@ console.log(`Will Serve Frontend: ${serveFrontend && indexHtmlExists ? '✅ YES'
 
 if (serveFrontend && indexHtmlExists) {
   console.log(`\n✅ Serving frontend from: ${resolvedFrontendPath}\n`);
-  
+
   // Serve static files from frontend dist
   app.use(express.static(resolvedFrontendPath, {
     maxAge: '1y', // Cache static assets for 1 year
@@ -370,15 +376,15 @@ if (serveFrontend && indexHtmlExists) {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path === '/health') {
       return next();
     }
-    
+
     // For non-GET requests to non-API routes, return 404 (these should go to API)
     if (req.method !== 'GET' && req.method !== 'HEAD') {
-      return res.status(404).json({ 
+      return res.status(404).json({
         message: 'Route not found',
         hint: 'Non-GET requests should be sent to /api/* endpoints'
       });
     }
-    
+
     // Serve index.html for all GET/HEAD requests (SPA routing)
     res.sendFile(path.resolve(indexPath));
   });
@@ -409,7 +415,7 @@ if (!serveFrontend || !indexHtmlExists) {
       res.status(404).json({ message: 'Route not found' });
     } else {
       // For non-API routes when frontend is not served, provide helpful message
-      res.status(404).json({ 
+      res.status(404).json({
         message: 'Route not found. Frontend is not being served from this server.',
         hint: 'If you want to serve the frontend, set SERVE_FRONTEND=true and build the frontend.'
       });

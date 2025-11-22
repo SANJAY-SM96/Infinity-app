@@ -6,8 +6,8 @@ import { useTheme } from '../context/ThemeContext';
 import { productService } from '../api/productService';
 import ProductCard from '../components/ProductCard';
 import ProjectRequestForm from '../components/ProjectRequestForm';
-import { 
-  FiFileText, 
+import {
+  FiFileText,
   FiShoppingBag,
   FiTrendingUp,
   FiStar,
@@ -18,6 +18,10 @@ import {
   FiCheckCircle
 } from 'react-icons/fi';
 import Loader from '../components/Loader';
+import StudentSEO from '../components/student/StudentSEO';
+import ProjectTopics from '../components/student/ProjectTopics';
+import ProjectPlanner from '../components/student/ProjectPlanner';
+import ProjectGallery from '../components/student/ProjectGallery';
 
 export default function StudentHome() {
   const { user } = useAuth();
@@ -43,13 +47,13 @@ export default function StudentHome() {
     }
   };
 
-  const bgClass = isDark 
-    ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900' 
+  const bgClass = isDark
+    ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
     : 'bg-gradient-to-br from-slate-50 via-indigo-50/30 to-primary-50/20';
   const textClass = isDark ? 'text-white' : 'text-gray-900';
   const textMuted = isDark ? 'text-gray-400' : 'text-gray-600';
-  const cardBg = isDark 
-    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700' 
+  const cardBg = isDark
+    ? 'bg-gray-800/50 backdrop-blur-xl border-gray-700'
     : 'bg-white/80 backdrop-blur-xl border-gray-200';
 
   const features = [
@@ -77,6 +81,7 @@ export default function StudentHome() {
 
   return (
     <div className={`min-h-screen ${bgClass} ${textClass} pt-24`}>
+      <StudentSEO />
       {/* Hero Section */}
       <section className="relative overflow-hidden py-12 sm:py-16 md:py-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
@@ -216,10 +221,31 @@ export default function StudentHome() {
         </div>
       </section>
 
+      {/* Student Project Zone */}
+      <section className="py-10 sm:py-12 md:py-16 px-4 sm:px-6 bg-white dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-sm uppercase tracking-wider mb-4">
+              New Feature
+            </span>
+            <h2 className={`text-3xl sm:text-4xl md:text-5xl font-extrabold ${textClass} mb-4`}>
+              Student Project Zone
+            </h2>
+            <p className={`text-lg ${textMuted} max-w-2xl mx-auto`}>
+              Your all-in-one workspace to explore, plan, and showcase your academic projects.
+            </p>
+          </div>
+
+          <ProjectTopics />
+          <ProjectPlanner />
+          <ProjectGallery />
+        </div>
+      </section>
+
       {/* Project Request Form Modal */}
-      <ProjectRequestForm 
-        isOpen={showProjectForm} 
-        onClose={() => setShowProjectForm(false)} 
+      <ProjectRequestForm
+        isOpen={showProjectForm}
+        onClose={() => setShowProjectForm(false)}
       />
     </div>
   );

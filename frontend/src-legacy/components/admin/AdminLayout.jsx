@@ -18,8 +18,8 @@ export default function AdminLayout({ children }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const bgClass = isDark 
-    ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' 
+  const bgClass = isDark
+    ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900'
     : 'bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30';
 
   return (
@@ -28,7 +28,7 @@ export default function AdminLayout({ children }) {
       <div className={`fixed inset-0 bg-gradient-to-br ${isDark ? 'from-cyan-500/5 via-transparent to-pink-500/5' : 'from-blue-500/5 via-transparent to-indigo-500/5'} pointer-events-none`} />
       <div className={`fixed top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-br ${isDark ? 'from-cyan-500/10' : 'from-blue-500/10'} to-transparent rounded-full blur-3xl pointer-events-none`} />
       <div className={`fixed bottom-0 left-0 w-64 h-64 sm:w-96 sm:h-96 bg-gradient-to-tr ${isDark ? 'from-pink-500/10' : 'from-indigo-500/10'} to-transparent rounded-full blur-3xl pointer-events-none`} />
-      
+
       {/* Static Sidebar - Always visible on desktop */}
       <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
@@ -36,7 +36,7 @@ export default function AdminLayout({ children }) {
       <div className="flex-1 flex flex-col relative z-10 min-w-0 w-full lg:ml-64">
         {/* Page Content - Consistent spacing rhythm (4/6/8/12/16/24) */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0 w-full">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-6 sm:pt-24 sm:pb-8 lg:py-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

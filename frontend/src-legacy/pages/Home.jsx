@@ -46,7 +46,7 @@ import ProjectRequestForm from '../components/ProjectRequestForm';
 import { productService } from '../api/productService';
 import ProductCard from '../components/ProductCard';
 import AIChatbot from '../components/AIChatbot';
-import { BeamCircle } from '../components/ui/beam-circle';
+import BeamCircle from '../../components/animations/beam-circle';
 import { ParticleBackground } from '../components/ui/ParticleBackground';
 
 export default function Home() {
@@ -92,18 +92,18 @@ export default function Home() {
 
   // SEO metadata for Home page
   const seoData = useMemo(() => {
-    const faqs = [
+      const faqs = [
       {
         question: 'What is Infinity IT Project Marketplace?',
-        answer: 'Infinity is India\'s leading IT project marketplace where students can sell their projects and customers can buy ready-made IT projects with complete source code, documentation, and database. We offer 500+ verified projects in React, Python, AI/ML, Full-Stack, and MERN stack technologies.'
+        answer: 'Infinity is India\'s leading IT project marketplace where students and developers can publish their projects and customers can browse ready-made IT projects with complete source code, documentation, and database. We offer 500+ verified projects in React, Python, AI/ML, Full-Stack, and MERN stack technologies.'
       },
       {
         question: 'What types of projects are available on Infinity?',
         answer: 'We offer 500+ IT projects including React projects, Python projects, AI/ML projects, Full-Stack projects, MERN stack projects, web development projects, mobile app projects, college projects, final year projects, mini projects, and major projects. All projects come with complete source code, documentation, and database.'
       },
       {
-        question: 'Can students sell their projects on Infinity?',
-        answer: 'Yes! Students can register as sellers and upload their IT projects to earn money. We provide a platform for students to monetize their college projects, final year projects, and other IT projects.'
+        question: 'Can students publish their projects on Infinity?',
+        answer: 'Yes! Students can create an account and publish their IT projects to showcase their work and reach potential customers. We provide tools to upload project files, documentation, and demo links.'
       },
       {
         question: 'Do projects come with source code and documentation?',
@@ -142,9 +142,9 @@ export default function Home() {
     );
 
     return {
-      title: 'Infinity - IT Project Marketplace | Hosting, SEO, Support Services | IEEE Projects | Buy & Sell IT Projects',
-      description: 'Infinity - India\'s #1 IT Project Marketplace. Buy ready-made React, Python, AI/ML, Full-Stack, MERN stack projects with complete source code. Get cloud hosting, SEO optimization services, free support, and IEEE projects. Students can sell projects and earn money. 500+ verified projects available.',
-      keywords: 'IT projects, buy IT projects, sell IT projects, React projects, Python projects, AI ML projects, full stack projects, college projects, student projects, project marketplace, source code, cloud hosting, web hosting, SEO optimization, SEO services, free support, IEEE projects, IEEE final year projects, IEEE mini projects, database hosting',
+      title: 'Infinity - IT Project Marketplace | Hosting, SEO, Support Services | IEEE Projects | Ready-made IT Projects',
+      description: 'Infinity - India\'s leading IT Project Marketplace. Browse ready-made React, Python, AI/ML, Full-Stack, MERN stack projects with complete source code. Get cloud hosting, SEO optimization services, free support, and IEEE projects. 500+ verified projects available.',
+      keywords: 'IT projects, React projects, Python projects, AI ML projects, full stack projects, college projects, student projects, project marketplace, source code, cloud hosting, web hosting, SEO optimization, SEO services, free support, IEEE projects, IEEE final year projects, IEEE mini projects, database hosting',
       image: `${BASE_URL}/og-image.jpg`,
       url: BASE_URL,
       type: 'website',
@@ -360,7 +360,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
               >
-                Buy & Sell IT Projects
+                Ready-made IT Projects
                 <br />
                 With Full Source Code
               </motion.h4>
@@ -372,7 +372,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
-                India's leading IT project marketplace. Browse 500+ ready-made projects. Get complete source code. Sell your projects. Start today.
+                India's leading IT project marketplace. Browse 500+ ready-made projects with complete source code and documentation. Publish your projects to showcase your work and reach more users.
               </motion.p>
 
               {/* CTA Buttons */}
@@ -400,7 +400,7 @@ export default function Home() {
                     : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
                     }`}
                 >
-                  Start Selling
+                  Publish Project
                 </motion.button>
               </motion.div>
             </motion.div>
@@ -416,17 +416,6 @@ export default function Home() {
               <div className="relative z-10 flex items-center justify-center lg:justify-end">
                 <BeamCircle
                   size={beamCircleSize}
-                  centerIcon={
-                    <div className="relative">
-                      <div className={`w-24 h-24 rounded-full ${isDark ? 'bg-slate-800' : 'bg-slate-100'
-                        } flex items-center justify-center shadow-xl`}>
-                        <div className={`w-20 h-20 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'
-                          } flex items-center justify-center`}>
-                          <FiCode className={`${isDark ? 'text-blue-400' : 'text-blue-500'}`} size={32} />
-                        </div>
-                      </div>
-                    </div>
-                  }
                   orbits={[
                     {
                       id: 1,
@@ -2097,7 +2086,7 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            Start buying or selling IT projects today. Join 10K+ happy customers.
+            Start browsing projects today. Join 10K+ happy customers.
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center"
@@ -2121,7 +2110,7 @@ export default function Home() {
               onClick={() => navigate('/register?userType=student')}
               className="px-8 py-4 bg-white/20 backdrop-blur-sm border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-primary transition-all duration-300"
             >
-              Start Selling
+              Publish Project
             </motion.button>
           </motion.div>
         </div>

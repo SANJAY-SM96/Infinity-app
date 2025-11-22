@@ -128,11 +128,11 @@ export default function ProductList() {
   const seoData = useMemo(() => {
     const currentUrl = `${BASE_URL}/products${activeFilter ? `?filter=${activeFilter}` : ''}`;
     const pageTitle = activeFilter 
-      ? `${filterLabel} | Buy ${filterLabel} Online | Infinity Marketplace`
-      : 'IT Projects Marketplace | Buy React, Python, AI/ML Projects Online | Infinity';
+      ? `${filterLabel} | Buy ${filterLabel} Online | Infinity Web Technology`
+      : 'IT Projects Marketplace | Buy React, Python, AI/ML Projects Online | Infinity Web Technology';
     const pageDescription = activeFilter
-      ? `Browse ${filterLabel} with complete source code. Buy ${filterLabel.toLowerCase()} for college projects, final year projects, and professional use. Instant download, lifetime support.`
-      : 'Browse 500+ ready-made IT projects including React, Python, AI/ML, Full-Stack, MERN stack projects with complete source code. Buy IT projects for college, final year, and professional use.';
+      ? `Browse ${filterLabel} with complete source code at Infinity Web Technology. Buy ${filterLabel.toLowerCase()} for college projects, final year projects, and professional use. Instant download, lifetime support.`
+      : 'Browse 500+ ready-made IT projects including React, Python, AI/ML, Full-Stack, MERN stack projects with complete source code at Infinity Web Technology. Buy IT projects for college, final year, and professional use.';
     
     const breadcrumbs = [
       { name: 'Home', url: BASE_URL },
@@ -150,7 +150,7 @@ export default function ProductList() {
     return {
       title: pageTitle,
       description: pageDescription,
-      keywords: `${filterLabel}, IT projects, buy ${filterLabel.toLowerCase()}, source code, college projects, final year projects, React projects, Python projects, AI ML projects`,
+      keywords: `${filterLabel}, IT projects, buy ${filterLabel.toLowerCase()}, source code, college projects, final year projects, React projects, Python projects, AI ML projects, Infinity Web Technology`,
       image: `${BASE_URL}/og-image.jpg`,
       url: currentUrl,
       type: 'website',

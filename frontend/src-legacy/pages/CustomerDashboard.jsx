@@ -3,9 +3,9 @@ import { useAuth } from '../context/AuthContext';
 import { orderService } from '../api/orderService';
 import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
-import { 
-  FiPackage, 
-  FiDownload, 
+import {
+  FiPackage,
+  FiDownload,
   FiShoppingBag,
   FiDollarSign,
   FiEdit,
@@ -19,6 +19,8 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { commonClasses, getPageLayoutClasses, animationVariants, cn } from '../utils/designSystem';
 import PageLayout from '../components/PageLayout';
+import StatsCard3D from '../components/ui/StatsCard3D';
+import SEO from '../components/SEO';
 
 export default function CustomerDashboard() {
   const { user, updateProfile } = useAuth();
@@ -70,7 +72,7 @@ export default function CustomerDashboard() {
       toast.error('Please fill all fields');
       return;
     }
-    
+
     // In production, send to backend
     toast.success('Request submitted! We will contact you soon.');
     setShowRequestForm(false);
@@ -83,60 +85,83 @@ export default function CustomerDashboard() {
 
   const layoutClasses = getPageLayoutClasses(isDark);
 
+  const totalSpent = orders.reduce((sum, order) => sum + (order.total || 0), 0);
+  const activeOrders = orders.filter(o => o.orderStatus !== 'Delivered').length;
+
   return (
     <PageLayout
       title={`Welcome, ${user?.name || 'Customer'}! 👋`}
       subtitle="Browse, purchase, and download ready-made IT projects for your business needs"
     >
+      <SEO
+        title="Customer Dashboard"
+        description="View your purchased projects, download source code, and manage your profile."
+      />
+
       {/* Welcome Section */}
       <motion.div
         variants={animationVariants.fadeIn}
         initial="initial"
         animate="animate"
-        className={cn(commonClasses.card(isDark), 'mb-6 sm:mb-8 bg-gradient-to-r', isDark ? 'from-gray-800/50 to-gray-700/50' : 'from-blue-50/50 to-indigo-50/50')}
+        className="mb-8"
       >
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
-            <div className="flex-1 w-full min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold mb-2 sm:mb-3 leading-tight">
-                <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Welcome, {user?.name || 'Customer'}! 👋
-                </span>
-              </h1>
-              <p className={`text-xs sm:text-sm md:text-base lg:text-lg mb-3 sm:mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                Browse, purchase, and download ready-made IT projects for your business needs
-              </p>
-              <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4">
-                <div className={`px-2 sm:px-3 md:px-4 py-2 rounded-lg sm:rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Purchases</p>
-                  <p className={`text-lg sm:text-xl md:text-2xl font-bold ${textClass}`}>{orders.length}</p>
-                </div>
-                <div className={`px-2 sm:px-3 md:px-4 py-2 rounded-lg sm:rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Spent</p>
-                  <p className={`text-lg sm:text-xl md:text-2xl font-bold text-green-500 truncate`}>
-                    ₹{orders.reduce((sum, order) => sum + (order.total || 0), 0).toFixed(0)}
-                  </p>
-                </div>
-                <div className={`px-2 sm:px-3 md:px-4 py-2 rounded-lg sm:rounded-xl ${isDark ? 'bg-gray-700/50' : 'bg-white/80'} border ${isDark ? 'border-gray-600' : 'border-gray-200'}`}>
-                  <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-1`}>Active</p>
-                  <p className={`text-lg sm:text-xl md:text-2xl font-bold text-blue-500`}>
-                    {orders.filter(o => o.orderStatus !== 'Delivered').length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <Link to="/products" className="w-full lg:w-auto">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full lg:w-auto px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm md:text-base whitespace-nowrap"
-              >
-                <FiShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
-                <span className="hidden sm:inline">Browse Projects</span>
-                <span className="sm:hidden">Browse</span>
-              </motion.button>
-            </Link>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold mb-2 sm:mb-3 leading-tight">
+              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Dashboard Overview
+              </span>
+            </h1>
+            <p className={`text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              Manage your purchases and account details
+            </p>
           </div>
-        </motion.div>
+          <Link to="/products">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-3 bg-gradient-to-r from-primary via-blue-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+            >
+              <FiShoppingBag className="w-5 h-5" />
+              Browse Projects
+            </motion.button>
+          </Link>
+        </div>
+
+        {/* 3D Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="h-48">
+            <StatsCard3D
+              title="Total Purchases"
+              value={orders.length}
+              icon={FiPackage}
+              color="primary"
+              delay={0.1}
+            />
+          </div>
+          <div className="h-48">
+            <StatsCard3D
+              title="Total Spent"
+              value={`₹${totalSpent.toFixed(0)}`}
+              icon={FiDollarSign}
+              color="success"
+              delay={0.2}
+              trend="up"
+              trendValue="Lifetime"
+            />
+          </div>
+          <div className="h-48">
+            <StatsCard3D
+              title="Active Orders"
+              value={activeOrders}
+              icon={FiShoppingBag}
+              color="warning"
+              delay={0.3}
+              trend={activeOrders > 0 ? 'up' : 'neutral'}
+              trendValue={activeOrders > 0 ? 'Processing' : 'All Delivered'}
+            />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mb-6 sm:mb-8">
           {/* Profile Card */}
@@ -144,11 +169,11 @@ export default function CustomerDashboard() {
             variants={animationVariants.fadeIn}
             initial="initial"
             animate="animate"
-            className={cn(commonClasses.card(isDark), 'md:col-span-2 lg:col-span-1')}
+            className={cn(commonClasses.card(isDark), 'md:col-span-2 lg:col-span-2')}
           >
             <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <FiUser className="text-white w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+                <FiUser className="text-white w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <h2 className="text-base sm:text-lg md:text-xl font-bold truncate">{user?.name}</h2>
@@ -158,7 +183,7 @@ export default function CustomerDashboard() {
 
             {!editMode ? (
               <>
-                <div className={`space-y-2 sm:space-y-3 mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4 sm:mb-6 text-sm sm:text-base ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   <div>
                     <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Name</p>
                     <p className="font-semibold truncate">{user?.name}</p>
@@ -178,13 +203,13 @@ export default function CustomerDashboard() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setEditMode(true)}
-                  className="w-full px-3 sm:px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-bold rounded-xl text-sm sm:text-base"
+                  className="px-4 py-2 bg-gradient-to-r from-primary to-blue-600 text-white font-bold rounded-xl text-sm sm:text-base"
                 >
                   Edit Profile
                 </motion.button>
               </>
             ) : (
-              <div className="space-y-3 sm:space-y-4">
+              <div className="space-y-3 sm:space-y-4 max-w-md">
                 <input
                   type="text"
                   value={formData.name}
@@ -219,29 +244,6 @@ export default function CustomerDashboard() {
                 </div>
               </div>
             )}
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            variants={animationVariants.fadeIn}
-            initial="initial"
-            animate="animate"
-            transition={{ delay: 0.1 }}
-            className={commonClasses.card(isDark)}
-          >
-            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Purchase Stats</h3>
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Purchases</p>
-                <p className="text-2xl sm:text-3xl font-bold text-primary">{orders.length}</p>
-              </div>
-              <div>
-                <p className={`text-xs sm:text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Total Spent</p>
-                <p className="text-xl sm:text-2xl font-bold text-green-400">
-                  ₹{orders.reduce((sum, order) => sum + (order.total || 0), 0).toFixed(2)}
-                </p>
-              </div>
-            </div>
           </motion.div>
 
           {/* Quick Actions */}
@@ -394,12 +396,11 @@ export default function CustomerDashboard() {
               {orders.map((order) => (
                 <div
                   key={order._id}
-                  className={`p-3 sm:p-4 rounded-xl border ${
-                    isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'
-                  }`}
+                  className={`p-3 sm:p-4 rounded-xl border ${isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-2 sm:gap-4 mb-3 sm:mb-4">
-                    <Link 
+                    <Link
                       to={`/dashboard/orders/${order._id}`}
                       className="flex-1 min-w-0 hover:opacity-80 transition-opacity"
                     >
@@ -410,16 +411,15 @@ export default function CustomerDashboard() {
                     </Link>
                     <div className="text-left sm:text-right flex-shrink-0">
                       <p className="text-primary font-bold text-sm sm:text-base">₹{order.total?.toFixed(2)}</p>
-                      <span className={`px-2 sm:px-3 py-1 rounded text-xs font-bold ${
-                        order.orderStatus === 'Delivered'
+                      <span className={`px-2 sm:px-3 py-1 rounded text-xs font-bold ${order.orderStatus === 'Delivered'
                           ? 'bg-green-400/20 text-green-400'
                           : 'bg-yellow-400/20 text-yellow-400'
-                      }`}>
+                        }`}>
                         {order.orderStatus}
                       </span>
                     </div>
                   </div>
-                  
+
                   {order.items && order.items.length > 0 && (
                     <div className="space-y-2">
                       {order.items.map((item, index) => (
@@ -451,7 +451,7 @@ export default function CustomerDashboard() {
             </div>
           ) : (
             <div className="text-center py-8 sm:py-12">
-                <FiPackage className="mx-auto mb-4 text-gray-400 w-10 h-10 sm:w-12 sm:h-12" />
+              <FiPackage className="mx-auto mb-4 text-gray-400 w-10 h-10 sm:w-12 sm:h-12" />
               <p className={`text-sm sm:text-base ${isDark ? 'text-gray-400' : 'text-gray-600'} mb-4`}>
                 No purchases yet. Start browsing projects!
               </p>
@@ -467,7 +467,7 @@ export default function CustomerDashboard() {
             </div>
           )}
         </motion.div>
+      </motion.div>
     </PageLayout>
   );
 }
-

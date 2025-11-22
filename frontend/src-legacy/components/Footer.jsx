@@ -33,7 +33,7 @@ export default function Footer({ isHomePage = false }) {
               </h3>
             </div>
             <p className="text-slate-400 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
-              Infinity Web Technology - India's leading IT project marketplace. Buy and sell IT projects with complete source code. Trusted by 10K+ customers. 500+ verified projects in React, Python, AI/ML, Full-Stack, and MERN stack. Instant downloads. Lifetime support. All in Indian Rupees.
+              Infinity Web Technology - India's leading IT project marketplace. Browse and publish IT projects with complete source code. Trusted by 10K+ customers. 500+ verified projects in React, Python, AI/ML, Full-Stack, and MERN stack. Instant downloads. Lifetime support. All in Indian Rupees.
             </p>
             <div className="space-y-2 sm:space-y-3">
               <a 
