@@ -60,7 +60,7 @@ export default defineConfig({
     minify: 'esbuild', // Use esbuild (built-in, faster than terser, no extra dependency needed)
     cssCodeSplit: true, // Split CSS for better caching
     // Increase chunk size warning limit (in KB)
-    chunkSizeWarningLimit: 1500,
+    chunkSizeWarningLimit: 4000,
     // Production optimizations
     reportCompressedSize: true, // Report compressed size
     target: 'es2015', // Target modern browsers for smaller bundles
